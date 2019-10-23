@@ -1,7 +1,7 @@
 # Личный проект «YetiCave»
 
 * Студент: [Ксения Марковская](https://up.htmlacademy.ru/php/11/user/607871).
-* Наставник: `Неизвестно`.
+* Наставник: [Сергей Попов](https://htmlacademy.ru/profile/id1181399).
 
 ---
 
