@@ -12,13 +12,12 @@ $sale_ads = [
     ['title' => 'Маска Oakley Canopy', 'category' => 'Разное', 'price' => 5400, 'url' => 'img/lot-6.jpg'],
 ];
 
-function formatPrice(float $num) {
+function formatPrice(float $num): string {
     $price = ceil($num);
-    if($price >= 1000) {
-        $newFormat = number_format($price, 0, '.', ' ');
-        return $newFormat . ' &#x20bd';
-    }
-    return $price . ' &#x20bd';
+    $newFormat = number_format($price, 0, '.', ' ');
+    $ruble_sign = '&#x20bd';
+    $price = ($price < 1000) ? $price : $newFormat;
+    return $price . ' ' . $ruble_sign;
 }
 ?>
 <!DOCTYPE html>
