@@ -2,15 +2,24 @@
 $is_auth = rand(0, 1);
 
 $user_name = 'Ксения'; // укажите здесь ваше имя
-$outfit_categories = ['Доски и лыжи', 'Крепления', 'Ботинки', 'Одежда', 'Инструменты', 'Разное'];
+$outfit_categories = ['Доски и лыжи', 'Крепления', 'Ботинки', 'Одежда', 'Инструменты', 'Разное',];
 $sale_ads = [
     ['title' => '2014 Rossignol District Snowboard', 'category' => 'Доски и лыжи', 'price' => 10999, 'url' => 'img/lot-1.jpg'],
     ['title' => 'DC Ply Mens 2016/2017 Snowboard', 'category' => 'Доски и лыжи', 'price' => 159999, 'url' => 'img/lot-2.jpg'],
     ['title' => 'Крепления Union Contact Pro 2015 года размер L/XL', 'category' => 'Крепления', 'price' => 8000, 'url' => 'img/lot-3.jpg'],
     ['title' => 'Ботинки для сноуборда DC Mutiny Charocal', 'category' => 'Ботинки', 'price' => 10999, 'url' => 'img/lot-4.jpg'],
     ['title' => 'Куртка для сноуборда DC Mutiny Charocal', 'category' => 'Одежда', 'price' => 7500, 'url' => 'img/lot-5.jpg'],
-    ['title' => 'Маска Oakley Canopy', 'category' => 'Разное', 'price' => 5400, 'url' => 'img/lot-6.jpg']
+    ['title' => 'Маска Oakley Canopy', 'category' => 'Разное', 'price' => 5400, 'url' => 'img/lot-6.jpg'],
 ];
+
+function formatPrice(float $num) {
+    $price = ceil($num);
+    if($price >= 1000) {
+        $newFormat = number_format($price, 0, '.', ' ');
+        return $newFormat . ' &#x20bd';
+    }
+    return $price . ' &#x20bd';
+}
 ?>
 <!DOCTYPE html>
 <html lang="ru">
@@ -84,7 +93,7 @@ $sale_ads = [
                     <div class="lot__state">
                         <div class="lot__rate">
                             <span class="lot__amount">Стартовая цена</span>
-                            <span class="lot__cost"><?= $value['price']; ?><b class="rub">р</b></span>
+                            <span class="lot__cost"><?= formatPrice($value['price']); ?></span>
                         </div>
                         <div class="lot__timer timer">
                             12:23
