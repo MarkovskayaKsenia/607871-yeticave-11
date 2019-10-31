@@ -10,7 +10,7 @@ function formatPrice(float $num): string
 }
 
 //Функция проверки и очистки данных, введенных пользователем.
-function checkUserData(string $str) {
-    return strip_tags($str);
+function checkUserData(string $str): string {
+    return htmlspecialchars(strip_tags($str));
 }
 
