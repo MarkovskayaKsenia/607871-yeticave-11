@@ -14,10 +14,10 @@ function checkUserData(string $str): string {
     return htmlspecialchars(strip_tags($str));
 }
 
-//Функция расчета времени до конца торгов
+//Функция расчета срока окончания торгов
 date_default_timezone_set('Europe/Moscow');
 
-function countExpiryTime(string $date){
+function countExpiryTime(string $date): array {
     $expiry_date = date_create($date);
     $now = date_create(date('Y-m-d H:i:s'));
 
@@ -34,3 +34,5 @@ function countExpiryTime(string $date){
 
     return $time_left;
 }
+
+
