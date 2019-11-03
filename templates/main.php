@@ -18,7 +18,7 @@ require_once ('functions.php');
         <h2>Открытые лоты</h2>
     </div>
     <ul class="lots__list">
-        <?php foreach ($sale_ads as $value): ?>
+        <?php foreach ($sale_ads as $key => $value): ?>
             <li class="lots__item lot">
                 <div class="lot__image">
                     <img src="<?= $value['url']; ?>" width="350" height="260" alt="<?= $value['img_title']; ?>">
@@ -31,8 +31,8 @@ require_once ('functions.php');
                             <span class="lot__amount">Стартовая цена</span>
                             <span class="lot__cost"><?= formatPrice($value['price']); ?></span>
                         </div>
-                        <div class="lot__timer timer">
-                            12:23
+                        <div class="lot__timer timer<?= ($expiry_time[$key][0] === '00') ? ' timer--finishing' : '' ?>">
+                            <?= $expiry_time[$key][0] . ':' . $expiry_time[$key][1]; ?>
                         </div>
                     </div>
                 </div>
