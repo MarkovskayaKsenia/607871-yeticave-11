@@ -1,0 +1,42 @@
+CREATE DATABASE yeticave
+    DEFAULT CHARACTER SET utf8
+    DEFAULT COLLATE utf8_general_ci;
+
+USE yeticave;
+
+CREATE TABLE outfit_categories (
+    id TINYINT(2) UNSIGNED NOT NULL AUTO_INCREMENT PRIMARY KEY,
+    outfit_category VARCHAR(32) NOT NULL UNIQUE,
+    description VARCHAR(32) NOT NULL
+);
+
+CREATE TABLE users_lots (
+    id INT(10) UNSIGNED NOT NULL AUTO_INCREMENT PRIMARY KEY,
+    reg_date TIMESTAMP NOT NULL,
+    outfit_title VARCHAR(50) NOT NULL,
+    description VARCHAR(255) NOT NULL,
+    img_url VARCHAR(50) NOT NULL UNIQUE,
+    starting_price MEDIUMINT(8) UNSIGNED NOT NULL,
+    expiry_date DATE NOT NULL,
+    bid_step SMALLINT(5) UNSIGNED NOT NULL,
+    user_id INT(10) UNSIGNED NOT NULL,
+    winner_id INT(10) UNSIGNED,
+    outfit_category_id TINYINT(3) UNSIGNED NOT NULL
+);
+
+CREATE TABLE lots_bids (
+    id INT(10) UNSIGNED NOT NULL AUTO_INCREMENT PRIMARY KEY,
+    reg_date TIMESTAMP NOT NULL,
+    bid_amount MEDIUMINT(8) UNSIGNED NOT NULL,
+    user_id INT(10) UNSIGNED NOT NULL,
+    lot_id INT(10) UNSIGNED NOT NULL
+);
+
+CREATE TABLE users (
+    id INT(10) UNSIGNED NOT NULL AUTO_INCREMENT PRIMARY KEY,
+    reg_date TIMESTAMP NOT NULL,
+    email VARCHAR(32) NOT NULL UNIQUE,
+    login VARCHAR(32) NOT NULL UNIQUE,
+    password VARCHAR(32) NOT NULL,
+    contacts VARCHAR(50) NOT NULL
+);
