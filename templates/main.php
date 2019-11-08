@@ -21,14 +21,14 @@ require_once ('functions.php');
         <?php foreach ($sale_ads as $key => $value): ?>
             <li class="lots__item lot">
                 <div class="lot__image">
-                    <img src="<?= $value['url']; ?>" width="350" height="260" alt="<?= $value['outfit_title']; ?>">
+                    <img src="<?= $value['img_url']; ?>" width="350" height="260" alt="<?= $value['outfit_title']; ?>">
                 </div>
                 <div class="lot__info">
                     <span class="lot__category"><?= checkUserData($value['outfit_category']); ?></span>
                     <h3 class="lot__title"><a class="text-link" href="pages/lot.html"><?= $value['outfit_title']; ?></a></h3>
                     <div class="lot__state">
                         <div class="lot__rate">
-                            <span class="lot__amount">Стартовая цена</span>
+                            <span class="lot__amount"><?= (!!$value['bid_count']) ? 'Текущая цена' : 'Стартовая цена'; ?></span>
                             <span class="lot__cost"><?= formatPrice($value['price']); ?></span>
                         </div>
                         <div class="lot__timer timer<?= ($expiry_time[$key][0] === '00') ? ' timer--finishing' : '' ?>">
