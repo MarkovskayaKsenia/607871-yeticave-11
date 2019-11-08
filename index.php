@@ -24,6 +24,7 @@ SQL;
 
     $result_ads = mysqli_query($mysql, $sql_ads);
 
+    //Запрос на получение списка категорий лотов
     $sql_categories = "SELECT description FROM outfit_categories";
     $result_categories = mysqli_query($mysql, $sql_categories);
 
