@@ -10,22 +10,18 @@ if(!$mysql) {
     print("Ошибка подключения: " . mysqli_connect_error());
 } else {
     //Запрос на получение массива объявлений о продаже
-    $sql_ads = <<<SQL
-SELECT 
-outfit_title, img_url, expiry_date, oc.description AS outfit_category, count(lb.bid_amount) as bid_count,
-IF (count(lb.bid_amount) > 0, MAX(lb.bid_amount), ul.starting_price) as price
-FROM users_lots AS ul
-LEFT JOIN outfit_categories AS oc ON ul.outfit_category_id = oc.id 
-LEFT JOIN lots_bids AS lb ON ul.id = lb.lot_id
-WHERE expiry_date > NOW()
-GROUP BY ul.id
-ORDER BY ul.reg_date DESC;
-SQL;
+    $sql_ads = "SELECT outfit_title, img_url, expiry_date, oc.description AS outfit_category, count(lb.bid_amount) AS bid_count, "
+        . "IF (count(lb.bid_amount) > 0, MAX(lb.bid_amount), ul.starting_price) as price "
+        . "FROM users_lots AS ul "
+        . "LEFT JOIN outfit_categories AS oc ON ul.outfit_category_id = oc.id "
+        . "LEFT JOIN lots_bids AS lb ON ul.id = lb.lot_id "
+        . "WHERE expiry_date > NOW() "
+        . "GROUP BY ul.id ORDER BY ul.reg_date DESC";
 
     $result_ads = mysqli_query($mysql, $sql_ads);
 
     //Запрос на получение списка категорий лотов
-    $sql_categories = "SELECT description FROM outfit_categories";
+    $sql_categories = "SELECT name, description FROM outfit_categories";
     $result_categories = mysqli_query($mysql, $sql_categories);
 
     if(!$result_ads || !$result_categories) {
@@ -33,7 +29,7 @@ SQL;
         print("Ошибка MySQL: " . $error);
     } else {
         $sale_ads = mysqli_fetch_all($result_ads, MYSQLI_ASSOC);
-        $outfit_categories = array_column(mysqli_fetch_all($result_categories, MYSQLI_ASSOC), 'description');
+        $outfit_categories = mysqli_fetch_all($result_categories, MYSQLI_ASSOC);
     }
 }
 
