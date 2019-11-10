@@ -33,11 +33,11 @@ VALUES ('2019-11-06 17:34:17', 11099, 3, 4),
 -- Запрос на получение всех записей из таблицы категорий;
 SELECT * FROM outfit_categories;
 
--- Запрос на самые новые, открытые лоты. Каждый лот должен включать название, стартовую цену, ссылку на изображение, цену, название категории;
+-- Запрос на самые новые, открытые лоты. Каждый лот должен включать название, стартовую цену, ссылку на изображение, текущую цену, название категории;
 SELECT ul.outfit_title,
        ul.starting_price,
        ul.img_url,
-       lb.bid_amount,
+       MAX(lb.bid_amount) AS max_bid_amount,
        oc.description
 FROM users_lots AS ul
          LEFT JOIN outfit_categories AS oc
@@ -45,6 +45,7 @@ FROM users_lots AS ul
          LEFT JOIN lots_bids AS lb
                    ON ul.id = lb.lot_id
 WHERE ul.expiry_date > NOW()
+GROUP BY ul.id
 ORDER BY ul.reg_date DESC;
 
 --  Запрос на лот по его id. Получите также название категории, к которой принадлежит лот;

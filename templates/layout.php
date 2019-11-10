@@ -55,7 +55,7 @@ require_once ('functions.php');
         <ul class="nav__list container">
             <?php foreach ($outfit_categories as $value): ?>
             <li class="nav__item">
-                <a href="pages/all-lots.html"><?= checkUserData($value); ?></a>
+                <a href="pages/all-lots.html"><?= checkUserData($value['description']); ?></a>
             </li>
             <?php endforeach; ?>
         </ul>
