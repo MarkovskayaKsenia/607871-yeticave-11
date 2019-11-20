@@ -34,5 +34,3 @@ function countExpiryTime(string $date): array {
 
     return $time_left;
 }
-
-

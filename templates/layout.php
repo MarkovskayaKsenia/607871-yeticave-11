@@ -44,10 +44,7 @@ require_once ('functions.php');
         </nav>
     </div>
 </header>
-
-<main class="container">
     <?= $content; ?>
-</main>
 </div>
 
 <footer class="main-footer">
