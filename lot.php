@@ -6,12 +6,14 @@ require_once ('functions.php');
 $mysql = mysqli_connect('localhost', 'ksenia', 'thesimpsons', 'yeticave');
 mysqli_set_charset($mysql, 'utf8');
 
-$lot_id = filter_var($_GET['id'], FILTER_VALIDATE_INT) ?? 0 ;
-
 if (!$mysql) {
     print ('Ошибка подключения: ' . mysqli_connect_error());
     die();
 }
+
+//Очистка данных, переданных в $_GET
+$lot_id = $_GET['id'] ?? 0;
+$lot_id = intval(filter_var($lot_id, FILTER_VALIDATE_INT));
 
 //Получение категории из базы данных
 $sql_categories = "SELECT description FROM outfit_categories";
