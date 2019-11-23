@@ -34,3 +34,28 @@ function countExpiryTime(string $date): array {
 
     return $time_left;
 }
+
+//Проверка существования данных в массиве $_POST
+function getFormData(array $arr, string $name): string {
+    return $arr[$name] ?? '';
+}
+
+//Проверка корректной длины строки
+function isCorrectLength(string $str, int $min, int $max) {
+    $str = checkUserData($str);
+    if (mb_strlen($str) < $min || mb_strlen($str) > $max) {
+        return "Значение поля должно быть не меньше $min и не больше $max символов";
+    }
+}
+
+//Проверка корректного числа
+function isCorrectNumber(int $num, int $min, int $max) {
+    $num = filter_var($num, FILTER_VALIDATE_INT);
+    if ($num < $min || $num > $max) {
+        return "Введите значение от $min до $max";
+    }
+}
+
+
+
+
