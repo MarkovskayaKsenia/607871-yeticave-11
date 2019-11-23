@@ -56,6 +56,15 @@ function isCorrectNumber(int $num, int $min, int $max) {
     }
 }
 
+//Генерация нового имени файла
+function getRandomFileName(string $path, string $filename) {
+    $extension = pathinfo($filename, PATHINFO_EXTENSION);
 
+    do {
+        $name = uniqid();
+        $file = $path . $name . '.' . $extension;
+    } while (file_exists($file));
+    return $name . '.' . $extension;
+}
 
 
