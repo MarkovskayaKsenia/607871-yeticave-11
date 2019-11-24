@@ -112,3 +112,29 @@ function getRandomFileName(string $path, string $filename)
     return $name . '.' . $extension;
 }
 
+//Проверка корректности email
+function isCorrectEmail(string $str) {
+    if(!filter_var($str, FILTER_VALIDATE_EMAIL)) {
+        return 'Введите корректный email';
+    }
+}
+
+
+//Проверка корректности пароля
+function isCorrecrPassword($pass, $min, $max)
+{
+    $pass = trim($pass);
+    $errorLength = isCorrectLength($pass, $min, $max);
+    if (isset($errorLength)) {
+        $result = $errorLength;
+    } else {
+        if (!preg_match("/^[0-9a-zA-Zа-яА-Я]+$/", $pass)) {
+            $result = "Пароль должен содержать только буквы и цифры";
+        }
+    }
+
+    if (isset($result)) {
+        return $result;
+    }
+}
+
