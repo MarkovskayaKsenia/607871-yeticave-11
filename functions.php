@@ -65,8 +65,7 @@ function isCorrectNumber(int $num, int $min, int $max)
 function checkLotImg(array $img)
 {
     if ($img['error'] != UPLOAD_ERR_NO_FILE) {
-        $finfo = finfo_open(FILEINFO_MIME_TYPE);
-        $file_type = finfo_file($finfo, $img['tmp_name']);
+        $file_type = mime_content_type($img['name']);
         $allowed_mime = ['image/jpg', 'image/png', 'image/jpeg'];
 
         if (!in_array($file_type, $allowed_mime)) {
@@ -76,7 +75,6 @@ function checkLotImg(array $img)
         } elseif ($img['size'] > 5 * pow(10, 6)) {
             $result = 'Файл не должен превышать 50 Mb';
         }
-        finfo_close($finfo);
 
     } else {
         $result = 'Загрузите файл с изображением лота';

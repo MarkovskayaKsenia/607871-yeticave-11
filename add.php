@@ -101,7 +101,6 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         return $result;
     }
 
-
 //Применение правил валидации к полям формы
     foreach ($_POST as $key => $value) {
 
@@ -115,7 +114,6 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
             ($key == 'category' && filter_var($result, FILTER_VALIDATE_INT)) ? $category_id = $result : $errors[$key] = $result;
         }
     };
-
 
     //Проверка на ошибки при загрузке изображения лота
     if (checkLotImg($_FILES['lot-img'])) {
