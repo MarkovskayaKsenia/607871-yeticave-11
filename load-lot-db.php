@@ -1,4 +1,6 @@
 <?php
+require_once ('functions.php');
+
 //Путь сохранения изображений.
 $newImgPath = __DIR__ . '/uploads/';
 $newImgName = getRandomFileName($newImgPath, $_FILES['lot-img']['name']);
@@ -20,7 +22,7 @@ $starting_price = checkUserData($_POST['lot-rate']);
 $expiry_date = checkUserData($_POST['lot-date']);
 $bid_step = checkUserData($_POST['lot-step']);
 $user_id = 3;
-$outfit_category = $category_id;
+$outfit_category = $_POST['category'];
 
 //Подготовка sql-выражения для добавления лота
 $stm_add = db_get_prepare_stmt($mysql, $sql_add, [

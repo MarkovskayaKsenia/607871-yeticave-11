@@ -65,7 +65,7 @@ function isCorrectNumber(int $num, int $min, int $max)
 function checkLotImg(array $img)
 {
     if ($img['error'] != UPLOAD_ERR_NO_FILE) {
-        $file_type = mime_content_type($img['name']);
+        $file_type = mime_content_type($img['tmp_name']);
         $allowed_mime = ['image/jpg', 'image/png', 'image/jpeg'];
 
         if (!in_array($file_type, $allowed_mime)) {

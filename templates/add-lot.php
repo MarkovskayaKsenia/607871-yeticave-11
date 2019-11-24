@@ -19,9 +19,9 @@
             <div class="form__item<?= isset($errors['category']) ? ' form__item--invalid' : ''; ?>">
                 <label for="category">Категория <sup>*</sup></label>
                 <select id="category" name="category">
-                    <option>Выберите категорию</option>
+                    <option value = "0">Выберите категорию</option>
                     <?php foreach ($outfit_categories as $value): ?>
-                        <option <?= (getFormData($_POST, 'category') == $value['description']) ? 'selected="true"' : '' ; ?>><?= checkUserData($value['description']); ?></option>
+                        <option value="<?= $value['id']; ?>"<?= (getFormData($_POST, 'category') == $value['description']) ? ' selected="true"' : '' ; ?>><?= checkUserData($value['description']); ?></option>
                     <?php endforeach; ?>
                 </select>
                 <span class="form__error"><?= $errors['category'] ?? ''; ?></span>

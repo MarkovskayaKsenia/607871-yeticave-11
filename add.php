@@ -78,41 +78,25 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 //Массив для сбора ошибок валидации
     $errors = [];
 
-//Идентификатор выбранной категории лота
-    $category_id = 0;
-
 //Проверка корректной категории добавляемого лота
-    function checkCategoryExistence(array $outfit_categories, array $empty_errors, string $str)
+    function checkCategoryExistence(array $outfit_categories, array $empty_errors, $category_id)
     {
-        $category_id = 0;
-        $str = checkUserData($str);
-
-        foreach ($outfit_categories as $value) {
-            if ($value['description'] == $str) {
-                $category_id = $value['id'];
-                $result = $category_id;
-                break;
-            }
+        $category_id = (isset($category_id) && filter_var($category_id, FILTER_VALIDATE_INT)) ? $category_id : 0;
+        if (!in_array($category_id, array_column($outfit_categories, 'id'))) {
+            return $result = $empty_errors['category'];
         }
-
-        if ($category_id == 0) {
-            $result = $empty_errors['category'];
-        }
-        return $result;
     }
 
 //Применение правил валидации к полям формы
     foreach ($_POST as $key => $value) {
 
-        if (isset($value) && !empty($value)) {
+        if (isset($value) && !empty($value) && isset($rules[$key])) {
             $result = $rules[$key]($ranges);
         } else {
             $result = (in_array($key, $required_fields)) ? $empty_errors[$key] : '';
         }
 
-        if (isset($result) && !empty($result)) {
-            ($key == 'category' && filter_var($result, FILTER_VALIDATE_INT)) ? $category_id = $result : $errors[$key] = $result;
-        }
+       (isset($result) && !empty($result)) ? $errors[$key] = $result : '';
     };
 
     //Проверка на ошибки при загрузке изображения лота
@@ -149,5 +133,4 @@ $layout_content = include_template('layout.php', [
 ]);
 
 print($layout_content);
-
 
