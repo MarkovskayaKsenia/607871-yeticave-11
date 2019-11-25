@@ -75,9 +75,6 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         },
     ];
 
-//Массив для сбора ошибок валидации
-    $errors = [];
-
 //Проверка корректной категории добавляемого лота
     function checkCategoryExistence(array $outfit_categories, array $empty_errors, $category_id)
     {
