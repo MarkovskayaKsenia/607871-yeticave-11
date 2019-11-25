@@ -62,10 +62,6 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         (isset($result) && !empty($result)) ? $errors[$key] = $result : '';
     };
 
-//Загрузка пользователя в базу данных
-    if (count($errors) == 0) {
-        //require_once('');
-    }
 }
 
 
