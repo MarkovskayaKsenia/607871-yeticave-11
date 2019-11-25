@@ -23,7 +23,7 @@ require_once ('functions.php');
             <input type="search" name="search" placeholder="Поиск лота">
             <input class="main-header__search-btn" type="submit" name="find" value="Найти">
         </form>
-        <a class="main-header__add-lot button" href="pages/add-lot.html">Добавить лот</a>
+        <a class="main-header__add-lot button" href="pages/add-lot.php">Добавить лот</a>
 
         <nav class="user-menu">
             <?php if ($is_auth == 1): ?>
@@ -35,10 +35,10 @@ require_once ('functions.php');
             <?php else: ?>
             <ul class="user-menu__list">
                 <li class="user-menu__item">
-                    <a href="#">Регистрация</a>
+                    <a href="user-reg.php">Регистрация</a>
                 </li>
                 <li class="user-menu__item">
-                    <a href="#">Вход</a>
+                    <a href="user-login.php">Вход</a>
                 </li>
             </ul>
             <?php endif; ?>

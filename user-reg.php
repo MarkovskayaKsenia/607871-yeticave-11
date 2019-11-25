@@ -16,7 +16,6 @@ if (!$result_categories) {
 
 $outfit_categories = mysqli_fetch_all($result_categories, MYSQLI_ASSOC);
 
-
 //Массив для сбора ошибок валидации
 $errors = [];
 
@@ -26,7 +25,6 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     //Массив полей, обязательных к заполнению
     $required_fields = ['email', 'password', 'name', 'message',];
 
-
     //Текст ошибок для пустых полей формы
     $empty_errors = [
         'email' => 'Введите e-mail',
@@ -34,7 +32,6 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         'name' => 'Введите имя',
         'message' => 'Напишите как с вами связаться',
     ];
-
 
 //Массив допустимых диапазонов для полей формы
     $ranges = [
@@ -52,7 +49,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
             return isCorrectEmail($_POST['email']);
         },
         'password' => function (array $ranges) {
-            return isCorrecrPassword($_POST['password'], $ranges['password_min'], $ranges['password_max']);
+            return isCorrectPassword($_POST['password'], $ranges['password_min'], $ranges['password_max']);
         },
         'name' => function (array $ranges) {
             return isCorrectLength($_POST['name'], $ranges['name_min'], $ranges['name_max']);
@@ -61,8 +58,6 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
             return isCorrectLength($_POST['message'], $ranges['message_min'], $ranges['message_max']);
         },
     ];
-
-
 
 //Применение правил валидации к полям формы
     foreach ($_POST as $key => $value) {
@@ -78,10 +73,39 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
 //Загрузка пользователя в базу данных
     if (count($errors) == 0) {
-        //require_once('');
+        //Проверка на существование пользователя с таким же email
+        $email = mysqli_real_escape_string($mysql, $_POST['email']);
+        $sql_email_query = "SELECT id FROM users WHERE email = '$email'" ;
+        $result_email = mysqli_query($mysql, $sql_email_query);
+
+        if (mysqli_num_rows($result_email) > 0) {
+            $errors['email'] = 'Пользователь с таким email уже существует';
+        }  else {
+
+            //Добавление юзера в базу данных
+            $sql_user = "INSERT INTO users (reg_date, email, login, password, contacts) "
+                . " VALUES(NOW(), ?, ?, ?, ?)";
+
+//Подготовка данных для передачи в базу данных
+            $login = checkUserData($_POST['name']);
+            $password = password_hash($_POST['password'], PASSWORD_DEFAULT);
+            $contacts = checkUserData($_POST['message']);
+
+//Подготовка sql-выражения для добавления лота
+            $stm_user = db_get_prepare_stmt($mysql, $sql_user, [
+                $email,
+                $login,
+                $password,
+                $contacts
+            ]);
+
+            if (mysqli_stmt_execute($stm_user)) {
+                header('Location: /user-login.php');
+                exit();
+            }
+        }
     }
 }
-
 
 //Отрисовка страницы
 //Заголовок страницы
@@ -102,3 +126,4 @@ $layout_content = include_template('layout.php', [
 ]);
 
 print($layout_content);
+

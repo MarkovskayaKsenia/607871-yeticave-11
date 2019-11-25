@@ -12,7 +12,7 @@ function formatPrice(float $num): string
 //Функция проверки и очистки данных, введенных пользователем.
 function checkUserData(string $str): string
 {
-    return htmlspecialchars(strip_tags($str));
+    return htmlspecialchars(strip_tags(trim($str)));
 }
 
 //Функция расчета срока окончания торгов
@@ -121,20 +121,21 @@ function isCorrectEmail(string $str) {
 
 
 //Проверка корректности пароля
-function isCorrecrPassword($pass, $min, $max)
+function isCorrectPassword($pass, $min, $max)
 {
     $pass = trim($pass);
     $errorLength = isCorrectLength($pass, $min, $max);
     if (isset($errorLength)) {
         $result = $errorLength;
     } else {
-        if (!preg_match("/^[0-9a-zA-Zа-яА-Я]+$/", $pass)) {
-            $result = "Пароль должен содержать только буквы и цифры";
-        }
+        (!preg_match("/^[0-9a-zA-Zа-яА-Я]+$/", $pass)) ? $result = "Пароль должен содержать только буквы и цифры" : '';
+
     }
 
     if (isset($result)) {
         return $result;
     }
 }
+
+
 
