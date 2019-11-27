@@ -16,8 +16,6 @@ function checkUserData(string $str): string
 }
 
 //Функция расчета срока окончания торгов
-date_default_timezone_set('Europe/Moscow');
-
 function countExpiryTime(string $date): array
 {
     $expiry_date = date_create($date);
@@ -44,7 +42,7 @@ function getFormData(array $arr, string $name): string
 }
 
 //Проверка корректной длины строки
-function isCorrectLength(string $str, int $min, int $max)
+function isCorrectLength($str, int $min, int $max)
 {
     $str = checkUserData($str);
     if (mb_strlen($str) < $min || mb_strlen($str) > $max) {
@@ -53,11 +51,19 @@ function isCorrectLength(string $str, int $min, int $max)
 }
 
 //Проверка корректного числа
-function isCorrectNumber(int $num, int $min, int $max)
+function isCorrectNumber($num, int $min, int $max)
 {
     $num = filter_var($num, FILTER_VALIDATE_INT);
-    if ($num < $min || $num > $max) {
-        return "Введите значение от $min до $max";
+    if (isset($num) && !empty($num)) {
+        if ($num < $min || $num > $max) {
+            $result = "Введите значение от $min до $max";
+        }
+    } else {
+        $result = "Введите корректное число";
+    }
+
+    if(isset($result)) {
+        return $result;
     }
 }
 
@@ -99,6 +105,15 @@ function isCorrectDate($date, $min, $max)
     }
 }
 
+//Проверка корректной категории добавляемого лота
+function checkCategoryExistence(array $outfit_categories, array $empty_errors, $category_id)
+{
+    $category_id = (isset($category_id) && filter_var($category_id, FILTER_VALIDATE_INT)) ? $category_id : 0;
+    if (!in_array($category_id, array_column($outfit_categories, 'id'))) {
+        return $result = $empty_errors['category'];
+    }
+}
+
 //Генерация нового имени файла
 function getRandomFileName(string $path, string $filename)
 {
@@ -128,7 +143,7 @@ function isCorrectPassword($pass, $min, $max)
     if (isset($errorLength)) {
         $result = $errorLength;
     } else {
-        (!preg_match("/^[0-9a-zA-Zа-яА-Я]+$/", $pass)) ? $result = "Пароль должен содержать только буквы и цифры" : '';
+        (preg_match("/^[0-9a-zA-Zа-яА-Я]+$/", $pass) !== 1) ? $result = "Пароль должен содержать только буквы и цифры" : '';
 
     }
 
@@ -136,6 +151,99 @@ function isCorrectPassword($pass, $min, $max)
         return $result;
     }
 }
+
+//Функция для проверки расхождения ассоциативных массивов с одинаковыми ключами
+function key_compare_func($key1, $key2)
+{
+    if ($key1 == $key2)
+        return 0;
+    else if ($key1 > $key2)
+        return 1;
+    else
+        return -1;
+}
+
+//Склонение единиц измерения числа, данные в массиве: [для числа 1, для чисел 2-4, для остальных чисел]
+function declensionOfNouns(int $num, array $nouns): string {
+
+    if ($num >= 11 and $num <= 14) {
+        $i = 2;
+    } else {
+        switch ($num % 10){
+            case 1: $i = 0;
+                break;
+            case 2:
+            case 3:
+            case 4: $i = 1;
+                break;
+            default: $i = 2;
+                break;
+        }
+    }
+
+    return $num . ' ' . $nouns[$i];
+}
+
+//Подбор формата для отображения "срока давности" даты
+function formatTimeDistance(string $date): string {
+
+    $reg_date = strtotime($date);
+    $now = strtotime(date('Y-m-d H:i:s'));
+    $diff = $now - $reg_date;
+
+    $time_declensions = [
+        'hours' => ['час', 'часа', 'часов'],
+        'minutes' => ['минуту', 'минуты', 'минут']
+    ];
+
+    $diff_distance = [
+        'days' => floor($diff / 86400),
+        'hours' => floor($diff / 3600),
+        'minutes' => floor($diff / 60)
+    ];
+
+    if($diff_distance['days'] > 0) {
+        $date_format= date('y.m.d',$reg_date) . ' в ' . date('H:i', $reg_date);
+    } else{
+        $key = ($diff_distance['hours'] > 0) ? 'hours' : 'minutes';
+        $num_display = $diff_distance[$key];
+        $format = $time_declensions[$key];
+    }
+
+    $result = (isset($num_display)) ? declensionOfNouns($num_display, $format) . ' назад': $date_format;
+    return $result;
+}
+
+//Проверка на право сделать ставку - доступ к кнопке на форме
+function bidResolution($lot_data, $bids_list) {
+    //Идентификатор последней ставки
+    $last_bid_id = (!empty($bids_list)) ? intval(max(array_column($bids_list, 'id'))) : 0;
+    //Ищем юзера с последней ставкой
+    $potential_winner = 0;
+    foreach ($bids_list as $value) {
+        if($value['id'] == $last_bid_id) {
+            $potential_winner = $value['user_id'];
+        }
+    }
+    //Правила проверки
+    $rules =[
+        'date' =>  ($lot_data['expiry_date'] > date('Y-m-d H:i:s')) ? true : false,
+        'session'=> (isset($_SESSION['user']) && $lot_data['user_id'] != $_SESSION['user']['id']) ? true : false,
+        'last_bid' => (isset($_SESSION['user']['id']) && $_SESSION['user']['id'] != $potential_winner) ? true : false,
+    ];
+
+    //Право на ставку есть, если не нарушено ни одно из правил
+    $result  = true;
+    foreach($rules as $value) {
+        if ($value !== true) {
+            $result = false;
+        }
+    }
+    return $result;
+}
+
+
+
 
 
 
