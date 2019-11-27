@@ -95,15 +95,17 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
             //Добавление юзера в базу данных
             $sql_user = "INSERT INTO users (reg_date, email, login, password, contacts) "
-                . " VALUES(NOW(), ?, ?, ?, ?)";
+                . " VALUES(?, ?, ?, ?, ?)";
 
             //Подготовка данных для передачи в базу данных
+            $reg_date = date('Y-m-d H:i:s');
             $login = checkUserData($_POST['name']);
             $password = password_hash($_POST['password'], PASSWORD_DEFAULT);
             $contacts = checkUserData($_POST['message']);
 
             //Подготовка sql-выражения для добавления лота
             $stm_user = db_get_prepare_stmt($mysql, $sql_user, [
+                $reg_date,
                 $email,
                 $login,
                 $password,

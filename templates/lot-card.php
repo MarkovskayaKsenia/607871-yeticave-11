@@ -32,12 +32,12 @@
                                 Мин. ставка <span><?= formatPrice($lot_data['price'] + $lot_data['bid_step']); ?></span>
                             </div>
                         </div>
-                        <?php if(isset($_SESSION['user'])): ?>
-                        <form class="lot-item__form" action="https://echo.htmlacademy.ru" method="post" autocomplete="off">
-                            <p class="lot-item__form-item form__item form__item--invalid">
+                        <?php if(bidResolution($lot_data, $bids_list)): ?>
+                        <form class="lot-item__form" action="" method="post" autocomplete="off">
+                            <p class="lot-item__form-item form__item<?= isset($errors['cost']) ? ' form__item--invalid' : ''; ?>">
                                 <label for="cost">Ваша ставка</label>
-                                <input id="cost" type="text" name="cost" placeholder="<?= substr(formatPrice($lot_data['price'] + $lot_data['bid_step']), 0, -2); ?>">
-                                <span class="form__error">Укажите размер ставки</span>
+                                <input id="cost" type="text" name="cost" placeholder="<?= substr(formatPrice($lot_data['price'] + $lot_data['bid_step']), 0, -2); ?>" value="<?= checkUserData(getFormData($_POST, 'cost')); ?>">
+                                <span class="form__error"><?= $errors['cost'] ; ?></span>
                             </p>
                             <button type="submit" class="button">Сделать ставку</button>
                         </form>

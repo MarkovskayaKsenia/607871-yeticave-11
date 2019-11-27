@@ -105,6 +105,15 @@ function isCorrectDate($date, $min, $max)
     }
 }
 
+//Проверка корректной категории добавляемого лота
+function checkCategoryExistence(array $outfit_categories, array $empty_errors, $category_id)
+{
+    $category_id = (isset($category_id) && filter_var($category_id, FILTER_VALIDATE_INT)) ? $category_id : 0;
+    if (!in_array($category_id, array_column($outfit_categories, 'id'))) {
+        return $result = $empty_errors['category'];
+    }
+}
+
 //Генерация нового имени файла
 function getRandomFileName(string $path, string $filename)
 {
@@ -204,6 +213,37 @@ function formatTimeDistance(string $date): string {
     $result = (isset($num_display)) ? declensionOfNouns($num_display, $format) . ' назад': $date_format;
     return $result;
 }
+
+//Проверка на право сделать ставку - доступ к кнопке на форме
+function bidResolution($lot_data, $bids_list) {
+    //Идентификатор последней ставки
+    $last_bid_id = (!empty($bids_list)) ? intval(max(array_column($bids_list, 'id'))) : 0;
+    //Ищем юзера с последней ставкой
+    $potential_winner = 0;
+    foreach ($bids_list as $value) {
+        if($value['id'] == $last_bid_id) {
+            $potential_winner = $value['user_id'];
+        }
+    }
+    //Правила проверки
+    $rules =[
+        'date' =>  ($lot_data['expiry_date'] > date('Y-m-d H:i:s')) ? true : false,
+        'session'=> (isset($_SESSION['user']) && $lot_data['user_id'] != $_SESSION['user']['id']) ? true : false,
+        'last_bid' => (isset($_SESSION['user']['id']) && $_SESSION['user']['id'] != $potential_winner) ? true : false,
+    ];
+
+    //Право на ставку есть, если не нарушено ни одно из правил
+    $result  = true;
+    foreach($rules as $value) {
+        if ($value !== true) {
+            $result = false;
+        }
+    }
+    return $result;
+}
+
+
+
 
 
 

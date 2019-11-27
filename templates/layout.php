@@ -30,7 +30,7 @@ require_once ('functions.php');
         <nav class="user-menu">
             <?php if (isset($_SESSION['user'])): ?>
             <div class="user-menu__logged">
-                <p><?= $_SESSION['user']['login'] ?></p>
+                <p><?= checkUserData($_SESSION['user']['login']); ?></p>
                 <a class="user-menu__bets" href="pages/my-bets.html">Мои ставки</a>
                 <a class="user-menu__logout" href="logout.php">Выход</a>
             </div>

@@ -81,15 +81,6 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         },
     ];
 
-//Проверка корректной категории добавляемого лота
-    function checkCategoryExistence(array $outfit_categories, array $empty_errors, $category_id)
-    {
-        $category_id = (isset($category_id) && filter_var($category_id, FILTER_VALIDATE_INT)) ? $category_id : 0;
-        if (!in_array($category_id, array_column($outfit_categories, 'id'))) {
-            return $result = $empty_errors['category'];
-        }
-    }
-
     //Проверка на заполнение обязательных полей
     foreach($required_fields as $value) {
         if(!isset($_POST[$value]) || empty($_POST[$value])) {
