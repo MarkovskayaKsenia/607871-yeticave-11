@@ -16,8 +16,6 @@ function checkUserData(string $str): string
 }
 
 //Функция расчета срока окончания торгов
-date_default_timezone_set('Europe/Moscow');
-
 function countExpiryTime(string $date): array
 {
     $expiry_date = date_create($date);
@@ -44,7 +42,7 @@ function getFormData(array $arr, string $name): string
 }
 
 //Проверка корректной длины строки
-function isCorrectLength(string $str, int $min, int $max)
+function isCorrectLength($str, int $min, int $max)
 {
     $str = checkUserData($str);
     if (mb_strlen($str) < $min || mb_strlen($str) > $max) {
@@ -53,11 +51,19 @@ function isCorrectLength(string $str, int $min, int $max)
 }
 
 //Проверка корректного числа
-function isCorrectNumber(int $num, int $min, int $max)
+function isCorrectNumber($num, int $min, int $max)
 {
     $num = filter_var($num, FILTER_VALIDATE_INT);
-    if ($num < $min || $num > $max) {
-        return "Введите значение от $min до $max";
+    if (isset($num) && !empty($num)) {
+        if ($num < $min || $num > $max) {
+            $result = "Введите значение от $min до $max";
+        }
+    } else {
+        $result = "Введите корректное число";
+    }
+
+    if(isset($result)) {
+        return $result;
     }
 }
 
@@ -128,13 +134,75 @@ function isCorrectPassword($pass, $min, $max)
     if (isset($errorLength)) {
         $result = $errorLength;
     } else {
-        (!preg_match("/^[0-9a-zA-Zа-яА-Я]+$/", $pass)) ? $result = "Пароль должен содержать только буквы и цифры" : '';
+        (preg_match("/^[0-9a-zA-Zа-яА-Я]+$/", $pass) !== 1) ? $result = "Пароль должен содержать только буквы и цифры" : '';
 
     }
 
     if (isset($result)) {
         return $result;
     }
+}
+
+//Функция для проверки расхождения ассоциативных массивов с одинаковыми ключами
+function key_compare_func($key1, $key2)
+{
+    if ($key1 == $key2)
+        return 0;
+    else if ($key1 > $key2)
+        return 1;
+    else
+        return -1;
+}
+
+//Склонение единиц измерения числа, данные в массиве: [для числа 1, для чисел 2-4, для остальных чисел]
+function declensionOfNouns(int $num, array $nouns): string {
+
+    if ($num >= 11 and $num <= 14) {
+        $i = 2;
+    } else {
+        switch ($num % 10){
+            case 1: $i = 0;
+                break;
+            case 2:
+            case 3:
+            case 4: $i = 1;
+                break;
+            default: $i = 2;
+                break;
+        }
+    }
+
+    return $num . ' ' . $nouns[$i];
+}
+
+//Подбор формата для отображения "срока давности" даты
+function formatTimeDistance(string $date): string {
+
+    $reg_date = strtotime($date);
+    $now = strtotime(date('Y-m-d H:i:s'));
+    $diff = $now - $reg_date;
+
+    $time_declensions = [
+        'hours' => ['час', 'часа', 'часов'],
+        'minutes' => ['минуту', 'минуты', 'минут']
+    ];
+
+    $diff_distance = [
+        'days' => floor($diff / 86400),
+        'hours' => floor($diff / 3600),
+        'minutes' => floor($diff / 60)
+    ];
+
+    if($diff_distance['days'] > 0) {
+        $date_format= date('y.m.d',$reg_date) . ' в ' . date('H:i', $reg_date);
+    } else{
+        $key = ($diff_distance['hours'] > 0) ? 'hours' : 'minutes';
+        $num_display = $diff_distance[$key];
+        $format = $time_declensions[$key];
+    }
+
+    $result = (isset($num_display)) ? declensionOfNouns($num_display, $format) . ' назад': $date_format;
+    return $result;
 }
 
 

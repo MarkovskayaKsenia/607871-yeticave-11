@@ -1,6 +1,5 @@
 <?php
 require_once ('helpers.php');
-require_once ('data.php');
 require_once('functions.php');
 require_once('config.php'); //Настройки подключения к базе данных
 
@@ -44,8 +43,6 @@ $page_content = include_template('main.php', [
 $layout_content = include_template('layout.php', [
     'content' => $page_content,
     'outfit_categories' => $outfit_categories,
-    'user_name' => $user_name,
-    'is_auth' => $is_auth,
     'title' => $title,
     ]);
 

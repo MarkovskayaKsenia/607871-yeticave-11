@@ -1,8 +1,14 @@
 <?php
 require_once ('helpers.php');
-require_once ('data.php');
 require_once('functions.php');
 require_once('config.php'); //Настройки подключения к базе данных
+
+//Проверка авторизации юзера
+if(isset($_SESSION['user'])) {
+    header($_SERVER['SERVER_PROTOCOL']. '403 Forbidden');
+    header('Location: /');
+    die();
+}
 
 //Получение категории из базы данных
 $sql_categories = "SELECT id, name, description FROM outfit_categories";
@@ -59,16 +65,21 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         },
     ];
 
-//Применение правил валидации к полям формы
-    foreach ($_POST as $key => $value) {
-
-        if (isset($value) && !empty($value) && isset($rules[$key])) {
-            $result = $rules[$key]($ranges);
-        } else {
-            $result = (in_array($key, $required_fields)) ? $empty_errors[$key] : '';
+    //Проверка на заполнение обязательных полей
+    foreach($required_fields as $value) {
+        if(!isset($_POST[$value]) || empty($_POST[$value])) {
+            $errors[$value] = isset($empty_errors[$value]) ?  $empty_errors[$value] : 'Поле не должно быть пустым';
         }
+    }
 
-        (isset($result) && !empty($result)) ? $errors[$key] = $result : '';
+    //Применение правил валидации к заполненным полям формы
+    foreach ($_POST as $key => $value) {
+        if (!isset($errors[$key])) {
+            if (isset($value) && !empty($value) && isset($rules[$key])) {
+                $result = $rules[$key]($ranges);
+            }
+            (isset($result) && !empty($result)) ? $errors[$key] = $result : '';
+        }
     };
 
 //Загрузка пользователя в базу данных
@@ -86,12 +97,12 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
             $sql_user = "INSERT INTO users (reg_date, email, login, password, contacts) "
                 . " VALUES(NOW(), ?, ?, ?, ?)";
 
-//Подготовка данных для передачи в базу данных
+            //Подготовка данных для передачи в базу данных
             $login = checkUserData($_POST['name']);
             $password = password_hash($_POST['password'], PASSWORD_DEFAULT);
             $contacts = checkUserData($_POST['message']);
 
-//Подготовка sql-выражения для добавления лота
+            //Подготовка sql-выражения для добавления лота
             $stm_user = db_get_prepare_stmt($mysql, $sql_user, [
                 $email,
                 $login,
@@ -120,8 +131,6 @@ $page_content = include_template('sign-up.php', [
 $layout_content = include_template('layout.php', [
     'content' => $page_content,
     'outfit_categories' => $outfit_categories,
-    'user_name' => $user_name,
-    'is_auth' => $is_auth,
     'title' => $title,
 ]);
 

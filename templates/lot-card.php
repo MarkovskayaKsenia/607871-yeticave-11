@@ -32,9 +32,29 @@
                                 Мин. ставка <span><?= formatPrice($lot_data['price'] + $lot_data['bid_step']); ?></span>
                             </div>
                         </div>
-
+                        <?php if(isset($_SESSION['user'])): ?>
+                        <form class="lot-item__form" action="https://echo.htmlacademy.ru" method="post" autocomplete="off">
+                            <p class="lot-item__form-item form__item form__item--invalid">
+                                <label for="cost">Ваша ставка</label>
+                                <input id="cost" type="text" name="cost" placeholder="<?= substr(formatPrice($lot_data['price'] + $lot_data['bid_step']), 0, -2); ?>">
+                                <span class="form__error">Укажите размер ставки</span>
+                            </p>
+                            <button type="submit" class="button">Сделать ставку</button>
+                        </form>
+                        <?php endif; ?>
                     </div>
-
+                        <div class="history">
+                            <h3>История ставок (<span><?= $bids_count; ?></span>)</h3>
+                            <table class="history__list">
+                                <?php foreach($bids_list as $value): ?>
+                                    <tr class="history__item">
+                                        <td class="history__name"><?= $value['login']; ?></td>
+                                        <td class="history__price"><?= formatPrice($value['bid_amount']); ?></td>
+                                        <td class="history__time"><?= formatTimeDistance($value['reg_date']); ?></td>
+                                    </tr>
+                                <?php endforeach; ?>
+                            </table>
+                        </div>
                 </div>
             </div>
         </section>

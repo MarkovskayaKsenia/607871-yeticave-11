@@ -1,8 +1,14 @@
 <?php
 require_once ('helpers.php');
-require_once ('data.php');
 require_once('functions.php');
 require_once('config.php'); //Настройки подключения к базе данных
+
+//Проверка авторизации юзера
+if(isset($_SESSION['user'])) {
+    header($_SERVER['SERVER_PROTOCOL']. '403 Forbidden');
+    header('Location: /');
+    die();
+}
 
 //Получение категории из базы данных
 $sql_categories = "SELECT id, name, description FROM outfit_categories";
@@ -24,7 +30,7 @@ $errors = [];
 if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
     //Массив полей, обязательных к заполнению
-    $required_fields = ['email', 'password', 'name', 'message',];
+    $required_fields = ['email', 'password'];
 
     //Текст ошибок для пустых полей формы
     $empty_errors = [
@@ -46,24 +52,56 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
             return isCorrectEmail($_POST['email']);
         },
         'password' => function (array $ranges) {
-            return isCorrecrPassword($_POST['password'], $ranges['password_min'], $ranges['password_max']);
+            return isCorrectPassword($_POST['password'], $ranges['password_min'], $ranges['password_max']);
         },
     ];
 
-//Применение правил валидации к полям формы
-    foreach ($_POST as $key => $value) {
-
-        if (isset($value) && !empty($value) && isset($rules[$key])) {
-            $result = $rules[$key]($ranges);
-        } else {
-            $result = (in_array($key, $required_fields)) ? $empty_errors[$key] : '';
+    //Проверка на заполнение обязательных полей
+    foreach($required_fields as $value) {
+        if(!isset($_POST[$value]) || empty($_POST[$value])) {
+            $errors[$value] = isset($empty_errors[$value]) ?  $empty_errors[$value] : 'Поле не должно быть пустым';
         }
+    }
 
-        (isset($result) && !empty($result)) ? $errors[$key] = $result : '';
+    //Применение правил валидации к заполненным полям формы
+    foreach ($_POST as $key => $value) {
+        if (!isset($errors[$key])) {
+            if (isset($value) && !empty($value) && isset($rules[$key])) {
+                $result = $rules[$key]($ranges);
+            }
+
+            (isset($result) && !empty($result)) ? $errors[$key] = $result : '';
+        }
     };
 
-}
+    if(count($errors) == 0) {
+        //Проверка на существование пользователя с таким  email
+        $email = mysqli_real_escape_string($mysql, $_POST['email']);
+        $sql_email_query = "SELECT * FROM users WHERE email = '$email'" ;
+        $result_user = mysqli_query($mysql, $sql_email_query);
 
+
+       if (mysqli_num_rows($result_user) === 1) {
+           $user = mysqli_fetch_assoc($result_user);
+
+            if (password_verify($_POST['password'], $user['password'])) {
+                $_SESSION['user'] = $user;
+                header('Location: /');
+                exit();
+            } else {
+                $errors['password'] = 'Неверный пароль';
+            }
+
+        } else {
+            $errors['email'] = 'Пользователя с таким email в базе не существует';
+        }
+    }
+
+
+
+
+
+}
 
 //Отрисовка страницы
 //Заголовок страницы
@@ -78,8 +116,6 @@ $page_content = include_template('login.php', [
 $layout_content = include_template('layout.php', [
     'content' => $page_content,
     'outfit_categories' => $outfit_categories,
-    'user_name' => $user_name,
-    'is_auth' => $is_auth,
     'title' => $title,
 ]);
 
