@@ -108,14 +108,16 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 $title = 'Вход';
 
 //Заполнение шаблонов данными и вставка на старницу
+$outfit_nav = include_template('outfit-nav.php', ['outfit_categories' => $outfit_categories]);
+
 $page_content = include_template('login.php', [
-    'outfit_categories' => $outfit_categories,
+    'outfit_nav' => $outfit_nav,
     'errors' => $errors,
 ]);
 
 $layout_content = include_template('layout.php', [
     'content' => $page_content,
-    'outfit_categories' => $outfit_categories,
+    'outfit_nav' => $outfit_nav,
     'title' => $title,
 ]);
 

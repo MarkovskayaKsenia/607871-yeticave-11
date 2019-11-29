@@ -9,7 +9,7 @@ $lot_id = $_GET['id'] ?? 0;
 $lot_id = intval(filter_var($lot_id, FILTER_VALIDATE_INT));
 
 //Получение категории из базы данных
-$sql_categories = "SELECT description FROM outfit_categories";
+$sql_categories = "SELECT id, description FROM outfit_categories";
 $result_categories = mysqli_query($mysql, $sql_categories);
 
 //Получение лота из базы данных
@@ -36,6 +36,9 @@ if (!$result_categories || !$result_lot) {
 $outfit_categories = mysqli_fetch_all($result_categories, MYSQLI_ASSOC);
 $lots_count = mysqli_num_rows($result_lot);
 
+//Заполняем шаблон навигации сайта по категориям
+$outfit_nav = include_template('outfit-nav.php', ['outfit_categories' => $outfit_categories]);
+
 //Проверка на количество полученных лотов
 if ($lots_count == 0) {
     header($_SERVER['SERVER_PROTOCOL'] . '404 Not Found');
@@ -44,7 +47,7 @@ if ($lots_count == 0) {
     $title = '404';
     //Контент страницы 404
     $page_content = include_template('404.php', [
-        'outfit_categories' => $outfit_categories,
+        'outfit_nav' => $outfit_nav,
     ]);
 } else {
     $lot_data = mysqli_fetch_assoc($result_lot);
@@ -72,7 +75,7 @@ if ($lots_count == 0) {
     $expiry_time = countExpiryTime($lot_data['expiry_date']);
     //Контент страницы в случае существования лота
     $page_content = include_template('lot-card.php', [
-        'outfit_categories' => $outfit_categories,
+        'outfit_nav' => $outfit_nav,
         'lot_data' => $lot_data,
         'expiry_time' => $expiry_time,
         'bids_count' => $bids_count,
@@ -83,7 +86,7 @@ if ($lots_count == 0) {
 
 $layout_content = include_template('layout.php', [
     'content' => $page_content,
-    'outfit_categories' => $outfit_categories,
+    'outfit_nav' => $outfit_nav,
     'title' => $title,
 ]);
 

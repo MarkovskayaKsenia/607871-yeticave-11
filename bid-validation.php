@@ -4,7 +4,7 @@ require_once('config.php');
 if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
     //Массив полей, обязательных к заполнению
-    $required_fields = ['cost',];
+    $required_fields = ['cost'];
     //Текст ошибок для пустых полей формы
     $empty_errors = [
         'cost' => 'Укажите вашу ставку',

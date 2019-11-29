@@ -1,13 +1,5 @@
 <main>
-    <nav class="nav">
-        <ul class="nav__list container">
-            <?php foreach ($outfit_categories as $value): ?>
-                <li class="nav__item">
-                    <a href="pages/all-lots.html"><?= checkUserData($value['description']); ?></a>
-                </li>
-            <?php endforeach; ?>
-        </ul>
-    </nav>
+    <?= $outfit_nav; ?>
     <form class="form container<?= (count($errors) != 0) ? ' form--invalid' : ''; ?>" action="user-reg.php" method="post" autocomplete="off">
         <h2>Регистрация нового аккаунта</h2>
         <div class="form__item<?= isset($errors['email']) ? ' form__item--invalid' : ''; ?>">
