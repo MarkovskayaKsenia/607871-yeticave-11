@@ -4,8 +4,8 @@ require_once('functions.php');
 require_once('config.php'); //Настройки подключения к базе данных
 
 //Проверка авторизации юзера
-if(!isset($_SESSION['user'])) {
-    header($_SERVER['SERVER_PROTOCOL']. '403 Forbidden');
+if (!isset($_SESSION['user'])) {
+    header($_SERVER['SERVER_PROTOCOL'] . '403 Forbidden');
     header('Location: /');
     die();
 }
@@ -22,7 +22,6 @@ if (!$result_categories) {
 
 $outfit_categories = mysqli_fetch_all($result_categories, MYSQLI_ASSOC);
 
-
 //Массив для сбора ошибок валидации
 $errors = [];
 
@@ -32,8 +31,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     //Массив полей, обязательных к заполнению
     $required_fields = ['lot-name', 'category', 'message', 'lot-rate', 'lot-step', 'lot-date'];
 
-
-//Текст ошибок для пустых полей формы
+    //Текст ошибок для пустых полей формы
     $empty_errors = [
         'lot-name' => 'Введите наименование лота',
         'category' => 'Выберите категорию',
@@ -43,7 +41,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         'lot-date' => 'Введите дату завершения торгов',
     ];
 
-//Массив допустимых диапазонов для полей формы
+    //Массив допустимых диапазонов для полей формы
     $ranges = [
         'lot-name_min' => 20,
         'lot-name_max' => 100,
@@ -58,7 +56,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         'lot-date_max' => date('Y-m-d', strtotime("+1 month")),
     ];
 
-//Правила валидации для полей
+    //Правила валидации для полей
     $rules = [
         'lot-name' => function (array $ranges) {
             return isCorrectLength($_POST['lot-name'], $ranges['lot-name_min'], $ranges['lot-name_max']);
@@ -82,13 +80,13 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     ];
 
     //Проверка на заполнение обязательных полей
-    foreach($required_fields as $value) {
-        if(!isset($_POST[$value]) || empty($_POST[$value])) {
+    foreach ($required_fields as $value) {
+        if (!isset($_POST[$value]) || empty($_POST[$value])) {
             $errors[$value] = isset($empty_errors[$value]) ? $empty_errors[$value] : 'Поле не должно быть пустым';
         }
     }
 
-//Применение правил валидации к заполненным полям формы
+    //Применение правил валидации к заполненным полям формы
     foreach ($_POST as $key => $value) {
         if (!isset($errors[$key])) {
             if (isset($value) && !empty($value) && isset($rules[$key])) {

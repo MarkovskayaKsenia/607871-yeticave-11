@@ -3,7 +3,6 @@ require_once ('helpers.php');
 require_once ('functions.php');
 require_once('config.php'); //Настройки подключения к базе данных
 
-
 //Очистка данных, переданных в $_GET
 $lot_id = $_GET['id'] ?? 0;
 $lot_id = intval(filter_var($lot_id, FILTER_VALIDATE_INT));
@@ -66,7 +65,6 @@ if ($lots_count == 0) {
     $errors = [];
 
     require_once ('bid-validation.php');
-
 
     //Заголовок старницы в случае существования лота
     $title = $lot_data['outfit_title'];
