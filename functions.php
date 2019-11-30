@@ -1,10 +1,10 @@
 <?php
 //Функция форматирования суммы на разряды.
-function formatPrice(float $num): string
+function formatPrice(float $num, bool $ruble_sign): string
 {
     $price = ceil($num);
     $newFormat = number_format($price, 0, '.', ' ');
-    $ruble_sign = '&#x20bd';
+    $ruble_sign = ($ruble_sign === true) ? '&#x20bd' : '';
     $price = ($price < 1000) ? $price : $newFormat;
     return $price . ' ' . $ruble_sign;
 }
@@ -227,9 +227,9 @@ function bidResolution($lot_data, $bids_list) {
     }
     //Правила проверки
     $rules =[
-        'date' =>  ($lot_data['expiry_date'] > date('Y-m-d H:i:s')) ? true : false,
-        'session'=> (isset($_SESSION['user']) && $lot_data['user_id'] != $_SESSION['user']['id']) ? true : false,
-        'last_bid' => (isset($_SESSION['user']['id']) && $_SESSION['user']['id'] != $potential_winner) ? true : false,
+        'date' =>  ($lot_data['expiry_date'] > date('Y-m-d H:i:s')),
+        'session'=> (isset($_SESSION['user']) && $lot_data['user_id'] != $_SESSION['user']['id']),
+        'last_bid' => (isset($_SESSION['user']['id']) && $_SESSION['user']['id'] != $potential_winner),
     ];
 
     //Право на ставку есть, если не нарушено ни одно из правил

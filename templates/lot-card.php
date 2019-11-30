@@ -1,13 +1,5 @@
     <main>
-        <nav class="nav">
-            <ul class="nav__list container">
-                <?php foreach ($outfit_categories as $value): ?>
-                    <li class="nav__item">
-                        <a href="all-lots.html"><?= checkUserData($value['description']); ?></a>
-                    </li>
-                <?php endforeach; ?>
-            </ul>
-        </nav>
+        <?= $outfit_nav; ?>
         <section class="lot-item container">
             <h2><?= $lot_data['outfit_title']; ?></h2>
             <div class="lot-item__content">
@@ -26,17 +18,17 @@
                         <div class="lot-item__cost-state">
                             <div class="lot-item__rate">
                                 <span class="lot-item__amount"><?= ($lot_data['bids_count'] == 0) ? 'Стартовая цена': 'Текущая цена'; ?></span>
-                                <span class="lot-item__cost"><?= $lot_data['price']; ?></span>
+                                <span class="lot-item__cost"><?= formatPrice($lot_data['price'], false); ?></span>
                             </div>
                             <div class="lot-item__min-cost">
-                                Мин. ставка <span><?= formatPrice($lot_data['price'] + $lot_data['bid_step']); ?></span>
+                                Мин. ставка <span><?= formatPrice($lot_data['price'] + $lot_data['bid_step'], true); ?></span>
                             </div>
                         </div>
                         <?php if(bidResolution($lot_data, $bids_list)): ?>
                         <form class="lot-item__form" action="" method="post" autocomplete="off">
                             <p class="lot-item__form-item form__item<?= isset($errors['cost']) ? ' form__item--invalid' : ''; ?>">
                                 <label for="cost">Ваша ставка</label>
-                                <input id="cost" type="text" name="cost" placeholder="<?= substr(formatPrice($lot_data['price'] + $lot_data['bid_step']), 0, -2); ?>" value="<?= checkUserData(getFormData($_POST, 'cost')); ?>">
+                                <input id="cost" type="text" name="cost" placeholder="<?= formatPrice($lot_data['price'] + $lot_data['bid_step'], false); ?>" value="<?= checkUserData(getFormData($_POST, 'cost')); ?>">
                                 <span class="form__error"><?= $errors['cost'] ; ?></span>
                             </p>
                             <button type="submit" class="button">Сделать ставку</button>
@@ -49,7 +41,7 @@
                                 <?php foreach($bids_list as $value): ?>
                                     <tr class="history__item">
                                         <td class="history__name"><?= $value['login']; ?></td>
-                                        <td class="history__price"><?= formatPrice($value['bid_amount']); ?></td>
+                                        <td class="history__price"><?= formatPrice($value['bid_amount'], true); ?></td>
                                         <td class="history__time"><?= formatTimeDistance($value['reg_date']); ?></td>
                                     </tr>
                                 <?php endforeach; ?>

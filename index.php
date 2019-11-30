@@ -3,6 +3,10 @@ require_once ('helpers.php');
 require_once('functions.php');
 require_once('config.php'); //Настройки подключения к базе данных
 
+//Запрос на получение списка категорий лотов
+$sql_categories = "SELECT id, name, description FROM outfit_categories";
+$result_categories = mysqli_query($mysql, $sql_categories);
+
 //Запрос на получение массива объявлений о продаже
 $sql_ads = "SELECT ul.id AS id, outfit_title, img_url, expiry_date, oc.description AS outfit_category, count(lb.bid_amount) AS bid_count, "
         . "IF (count(lb.bid_amount) > 0, MAX(lb.bid_amount), ul.starting_price) as price "
@@ -13,10 +17,6 @@ $sql_ads = "SELECT ul.id AS id, outfit_title, img_url, expiry_date, oc.descripti
         . "GROUP BY ul.id ORDER BY ul.reg_date DESC";
 
 $result_ads = mysqli_query($mysql, $sql_ads);
-
-//Запрос на получение списка категорий лотов
-$sql_categories = "SELECT name, description FROM outfit_categories";
-$result_categories = mysqli_query($mysql, $sql_categories);
 
 if (!$result_ads || !$result_categories) {
     $error = mysqli_error($mysql);
@@ -33,18 +33,26 @@ $title = 'Главная';
 //Расчет срока окончания торгов для всех объявлений
 $expiry_time = array_map('countExpiryTime', (array_column($sale_ads, 'expiry_date')));
 
+//Массив для множественного склонения слова 'ставка'
+$bids_declension = ['ставка', 'ставки', 'ставок'];
+
 //Заполнение шаблонов данными и вставка на старницу
+$outfit_nav = include_template('outfit-nav.php', ['outfit_categories' => $outfit_categories]);
+
 $page_content = include_template('main.php', [
     'outfit_categories' => $outfit_categories,
     'sale_ads' => $sale_ads,
     'expiry_time'=> $expiry_time,
+    'bids_declension' => $bids_declension,
     ]);
 
 $layout_content = include_template('layout.php', [
     'content' => $page_content,
-    'outfit_categories' => $outfit_categories,
+    'outfit_nav' => $outfit_nav,
     'title' => $title,
     ]);
 
 print($layout_content);
+
+
 

@@ -1,13 +1,5 @@
 <main>
-    <nav class="nav">
-        <ul class="nav__list container">
-            <?php foreach ($outfit_categories as $value): ?>
-            <li class="nav__item">
-                <a href="all-lots.html"><?= checkUserData($value['description']); ?></a>
-            </li>
-            <?php endforeach; ?>
-        </ul>
-    </nav>
+    <?= $outfit_nav; ?>
     <form class="form form--add-lot container <?= (count($errors) != 0) ? ' form--invalid' : ''; ?>" action="add.php" method="post" enctype="multipart/form-data">
         <h2>Добавление лота</h2>
         <div class="form__container-two">
