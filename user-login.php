@@ -22,7 +22,6 @@ if (!$result_categories) {
 
 $outfit_categories = mysqli_fetch_all($result_categories, MYSQLI_ASSOC);
 
-
 //Массив для сбора ошибок валидации
 $errors = [];
 
@@ -80,7 +79,6 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         $sql_email_query = "SELECT * FROM users WHERE email = '$email'" ;
         $result_user = mysqli_query($mysql, $sql_email_query);
 
-
        if (mysqli_num_rows($result_user) === 1) {
            $user = mysqli_fetch_assoc($result_user);
 
@@ -96,11 +94,6 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
             $errors['email'] = 'Пользователя с таким email в базе не существует';
         }
     }
-
-
-
-
-
 }
 
 //Отрисовка страницы

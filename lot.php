@@ -26,7 +26,6 @@ $stm_lot = db_get_prepare_stmt($mysql, $sql_lot, [$lot_id]);
 mysqli_stmt_execute($stm_lot);
 $result_lot = mysqli_stmt_get_result($stm_lot);
 
-
 //Проверка исполнения запросов на категории и лот
 if (!$result_categories || !$result_lot) {
     $error = mysqli_error($mysql);
