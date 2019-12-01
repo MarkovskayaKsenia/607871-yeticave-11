@@ -14,7 +14,7 @@ $result_categories = mysqli_query($mysql, $sql_categories);
 //Получение лота из базы данных
 $sql_lot = "SELECT ul.id AS id, ul.user_id AS user_id, outfit_title, img_url, expiry_date, bid_step, "
     . "ul.description AS description, oc.description AS outfit_category, count(lb.bid_amount) as bids_count, "
-    . "IF (count(lb.bid_amount) > 0, MAX(lb.bid_amount), ul.starting_price) as price "
+    . "IF (count(lb.bid_amount) > 0, MAX(lb.bid_amount), ul.starting_price) AS price "
     . "FROM users_lots AS ul "
     . "LEFT JOIN outfit_categories AS oc ON ul.outfit_category_id = oc.id "
     . "LEFT JOIN lots_bids AS lb ON ul.id = lb.lot_id "
