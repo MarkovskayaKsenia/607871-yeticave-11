@@ -13,7 +13,7 @@
                 <select id="category" name="category">
                     <option value = "0">Выберите категорию</option>
                     <?php foreach ($outfit_categories as $value): ?>
-                        <option value="<?= $value['id']; ?>"<?= (getFormData($_POST, 'category') == $value['description']) ? ' selected="true"' : '' ; ?>><?= checkUserData($value['description']); ?></option>
+                        <option value="<?= $value['id']; ?>"<?= (getFormData($_POST, 'category') == $value['id']) ? ' selected="true"' : '' ; ?>><?= checkUserData($value['description']); ?></option>
                     <?php endforeach; ?>
                 </select>
                 <span class="form__error"><?= $errors['category'] ?? ''; ?></span>

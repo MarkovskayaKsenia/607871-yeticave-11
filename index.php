@@ -9,7 +9,7 @@ $result_categories = mysqli_query($mysql, $sql_categories);
 
 //Запрос на получение массива объявлений о продаже
 $sql_ads = "SELECT ul.id AS id, outfit_title, img_url, expiry_date, oc.description AS outfit_category, count(lb.bid_amount) AS bid_count, "
-        . "IF (count(lb.bid_amount) > 0, MAX(lb.bid_amount), ul.starting_price) as price "
+        . "IF (count(lb.bid_amount) > 0, MAX(lb.bid_amount), ul.starting_price) AS price "
         . "FROM users_lots AS ul "
         . "LEFT JOIN outfit_categories AS oc ON ul.outfit_category_id = oc.id "
         . "LEFT JOIN lots_bids AS lb ON ul.id = lb.lot_id "

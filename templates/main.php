@@ -8,7 +8,7 @@ require_once ('functions.php');
     <ul class="promo__list">
         <?php foreach ($outfit_categories as $value): ?>
             <li class="promo__item promo__item--<?= $value['name']; ?>">
-                <a class="promo__link" href="pages/all-lots.php?cat=<?= $value['id']; ?>"><?= checkUserData($value['description']); ?></a>
+                <a class="promo__link" href="all-lots-cat.php?category=<?= $value['id']; ?>"><?= checkUserData($value['description']); ?></a>
             </li>
         <?php endforeach; ?>
     </ul>

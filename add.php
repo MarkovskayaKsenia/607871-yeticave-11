@@ -120,6 +120,7 @@ $outfit_nav = include_template('outfit-nav.php', ['outfit_categories' => $outfit
 
 $page_content = include_template('add-lot.php', [
     'outfit_nav' => $outfit_nav,
+    'outfit_categories' => $outfit_categories,
     'errors' => $errors,
 ]);
 
