@@ -1,0 +1,13 @@
+{
+    "name": "ksenia/yeticave",
+    "description": "sports equipment auction",
+    "authors": [
+        {
+            "name": "MarkovskayaKsenia",
+            "email": "triumph.86@mail.ru"
+        }
+    ],
+    "require": {
+        "swiftmailer/swiftmailer": "^6.2"
+    }
+}

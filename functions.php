@@ -243,16 +243,21 @@ function bidResolution($lot_data, $bids_list) {
 }
 
 //Рассчет статуса торгов за лот
-function checkBargainStatus($expiry_time, $winner_id, $user_id)
+function checkBargainStatus($expiry_time, $winner_id, $user_id, $current_bid, $max_bid)
 {
     if ($expiry_time[0] === '00' && $expiry_time[1] === '00') {
-        ($winner_id == $user_id) ? $result = [' rates__item--win',' timer--win', 'Ставка выиграла'] : $result = [' rates__item--end', ' timer--end', 'Торги окончены'];
+        ($winner_id == $user_id && $current_bid == $max_bid) ?
+            $result = [
+            ' rates__item--win',
+            ' timer--win',
+            'Ставка выиграла'
+        ] : $result = [' rates__item--end', ' timer--end', 'Торги окончены'];
     } elseif ($expiry_time[0] === '') {
         $result = ['', ' timer--finishing', $expiry_time[0] . ':' . $expiry_time[1]];
     } else {
         $result = ['', '', $expiry_time[0] . ':' . $expiry_time[1]];
     }
-           return $result;
+    return $result;
 }
 
 
