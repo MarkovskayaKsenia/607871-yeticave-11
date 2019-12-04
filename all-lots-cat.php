@@ -26,7 +26,7 @@ $rows_count = mysqli_fetch_assoc($result_count)['cnt'];
 $cur_page = $_GET['page'] ?? 1;
 $cur_page = (intval(filter_var($cur_page, FILTER_VALIDATE_INT))) ?? 1;
 
-$page_items = 2;
+$page_items = 9;
 $pages_count = ceil($rows_count / $page_items);
 $offset_ads = ($cur_page - 1) * $page_items;
 $pages = range(1, $pages_count);

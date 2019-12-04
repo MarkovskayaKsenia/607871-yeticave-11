@@ -16,7 +16,6 @@ $user_id = $_SESSION['user']['id'];
 $sql_categories = "SELECT id, name, description FROM outfit_categories";
 $result_categories = mysqli_query($mysql, $sql_categories);
 
-
 //Запрос на получение массива объявлений о продаже
 $sql_ads = "SELECT ul.id AS id, (SELECT users.contacts FROM users WHERE users.id = ul.user_id) AS contacts, "
     . "outfit_title, img_url, expiry_date, oc.description AS outfit_category, ul.winner_id AS winner_id, "
@@ -86,5 +85,4 @@ $layout_content = include_template('layout.php', [
 ]);
 
 print($layout_content);
-//print_r($sale_ads);
-//print_r($_SESSION['user']);
+
