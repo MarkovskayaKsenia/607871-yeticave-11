@@ -16,11 +16,11 @@ $user_id = $_SESSION['user']['id'];
 $sql_categories = "SELECT id, name, description FROM outfit_categories";
 $result_categories = mysqli_query($mysql, $sql_categories);
 
-
 //Запрос на получение массива объявлений о продаже
 $sql_ads = "SELECT ul.id AS id, (SELECT users.contacts FROM users WHERE users.id = ul.user_id) AS contacts, "
     . "outfit_title, img_url, expiry_date, oc.description AS outfit_category, ul.winner_id AS winner_id, "
-    . "lb.reg_date AS bid_date, lb.bid_amount AS bid "
+    . "lb.reg_date AS bid_date, lb.bid_amount AS bid, "
+    . "(SELECT MAX(bid_amount) FROM lots_bids WHERE lb.lot_id = lots_bids.lot_id group by lots_bids.lot_id ) AS max_bid "
     . "FROM users AS u "
     . "INNER JOIN lots_bids AS lb ON u.id = lb.user_id "
     . "LEFT JOIN users_lots AS ul ON lb.lot_id = ul.id "
@@ -55,7 +55,13 @@ if ($count_ads == 0) {
 
    //Вычисление статуса торгов
     foreach($expiry_time as $key => $value){
-        $bargain_status[] = checkBargainStatus($value, $sale_ads[$key]['winner_id'], $user_id);
+        $bargain_status[] = checkBargainStatus(
+            $value,
+            $sale_ads[$key]['winner_id'],
+            $user_id,
+            $sale_ads[$key]['bid'],
+            $sale_ads[$key]['max_bid']
+        );
     }
 
     //Заполнение контента страницы
@@ -79,5 +85,4 @@ $layout_content = include_template('layout.php', [
 ]);
 
 print($layout_content);
-//print_r($sale_ads);
-//print_r($_SESSION['user']);
+

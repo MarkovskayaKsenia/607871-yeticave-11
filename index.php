@@ -2,6 +2,7 @@
 require_once ('helpers.php');
 require_once('functions.php');
 require_once('config.php'); //Настройки подключения к базе данных
+require_once('getwinner.php');
 
 //Запрос на получение списка категорий лотов
 $sql_categories = "SELECT id, name, description FROM outfit_categories";
@@ -53,6 +54,4 @@ $layout_content = include_template('layout.php', [
     ]);
 
 print($layout_content);
-
-
 
