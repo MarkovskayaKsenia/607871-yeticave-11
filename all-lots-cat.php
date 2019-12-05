@@ -94,7 +94,7 @@ if ($count_ads == 0) {
         'expiry_time' => $expiry_time,
         'bids_declension' => $bids_declension,
         'pagination' => $pagination,
-        'category_desc' => $category_desc,
+        'category_description' => $category_desc,
     ]);
 }
 

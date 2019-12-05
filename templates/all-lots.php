@@ -2,7 +2,7 @@
     <?= $outfit_nav; ?>
     <div class="container">
         <section class="lots">
-            <h2>Все лоты в категории <span>«<?= $category_desc; ?>»</span></h2>
+            <h2>Все лоты в категории <span>«<?= $category_description; ?>»</span></h2>
             <ul class="lots__list">
                 <?php foreach ($sale_ads as $key => $value): ?>
                 <li class="lots__item lot">
