@@ -95,7 +95,7 @@ function isCorrectNumber($num, int $min, int $max)
             $result = "Введите значение от $min до $max";
         }
     } else {
-        $result = "Введите корректное число";
+        $result = "Введите корректное целое число";
     }
 
     if(isset($result)) {
@@ -350,10 +350,5 @@ function checkBargainStatus($expiry_time, $winner_id, $user_id, $current_bid, $m
     }
     return $result;
 }
-
-
-
-
-
 
 

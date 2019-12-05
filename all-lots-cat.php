@@ -87,12 +87,16 @@ if ($count_ads == 0) {
         'url' => $url,
     ]);
 
+    $ads_block = include_template('ads-block.php', [
+        'sale_ads' => $sale_ads,
+        'expiry_time'=> $expiry_time,
+        'bids_declension' => $bids_declension,
+    ]);
+
     //Заполнение контента страницы
     $page_content = include_template('all-lots.php', [
         'outfit_nav' => $outfit_nav,
-        'sale_ads' => $sale_ads,
-        'expiry_time' => $expiry_time,
-        'bids_declension' => $bids_declension,
+        'ads_block' => $ads_block,
         'pagination' => $pagination,
         'category_description' => $category_desc,
     ]);
