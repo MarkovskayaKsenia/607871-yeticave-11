@@ -5,9 +5,9 @@ require_once('functions.php');
 require_once('config.php');
 
 
-$transport = new Swift_SmtpTransport ('smtp.mailtrap.io', 2525);
-$transport->setUsername('12b6986765ab99');
-$transport->setPassword('eb3de6062df982');
+$transport = new Swift_SmtpTransport ('phpdemo.ru', 25);
+$transport->setUsername('keks@phpdemo.ru');
+$transport->setPassword('htmlacademy');
 
 
 $mailer = new Swift_Mailer($transport);
@@ -42,10 +42,10 @@ if ($query_find_winner && mysqli_num_rows($query_find_winner) > 0) {
             $message->setTo([$value['email'] => $value['login']]);
             $result_send_mail = $mailer->send($message);
             $count = ($result_send_mail) ? $count + 1 : $count;
-            sleep(5);
+
         }
     }
-    $output = "Отправлено:" . declensionOfNouns($count,
+    $output = "Отправлено: " . declensionOfNouns($count,
             ['письмо', 'письма', 'писем']) . " о победе в аукционе из " . count($result_find_winner);
     print($output);
 }
