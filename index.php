@@ -40,16 +40,21 @@ $bids_declension = ['ставка', 'ставки', 'ставок'];
 //Заполнение шаблонов данными и вставка на старницу
 $outfit_nav = include_template('outfit-nav.php', ['outfit_categories' => $outfit_categories]);
 
-$page_content = include_template('main.php', [
-    'outfit_categories' => $outfit_categories,
+$ads_block = include_template('ads-block.php', [
     'sale_ads' => $sale_ads,
     'expiry_time'=> $expiry_time,
     'bids_declension' => $bids_declension,
+]);
+
+$page_content = include_template('main.php', [
+    'outfit_categories' => $outfit_categories,
+    'ads_block' => $ads_block,
     ]);
 
 $layout_content = include_template('layout.php', [
     'content' => $page_content,
     'outfit_nav' => $outfit_nav,
+
     'title' => $title,
     ]);
 

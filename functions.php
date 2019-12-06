@@ -90,15 +90,16 @@ function isCorrectLength($str, int $min, int $max)
 function isCorrectNumber($num, int $min, int $max)
 {
     $num = filter_var($num, FILTER_VALIDATE_INT);
+    $result = '';
     if (isset($num) && !empty($num)) {
         if ($num < $min || $num > $max) {
             $result = "Введите значение от $min до $max";
         }
     } else {
-        $result = "Введите корректное число";
+        $result = "Введите корректное целое число";
     }
 
-    if(isset($result)) {
+    if(!empty($result)) {
         return $result;
     }
 }
@@ -111,6 +112,8 @@ function isCorrectNumber($num, int $min, int $max)
  */
 function checkLotImg(array $img)
 {
+    $result = '';
+
     if ($img['error'] != UPLOAD_ERR_NO_FILE) {
         $file_type = mime_content_type($img['tmp_name']);
         $allowed_mime = ['image/jpg', 'image/png', 'image/jpeg'];
@@ -127,7 +130,7 @@ function checkLotImg(array $img)
         $result = 'Загрузите файл с изображением лота';
     }
 
-    if (isset($result)) {
+    if (!empty($result)) {
         return $result;
     };
 }
@@ -142,13 +145,14 @@ function checkLotImg(array $img)
  */
 function isCorrectDate($date, $min, $max)
 {
+    $result = '';
     if (!is_date_valid($date)) {
         $result = 'Формат даты ГГГГ-ММ-ДД';
     } elseif ($date < $min || $date > $max) {
         $result = "Введите значение от $min до $max";
     }
 
-    if (isset($result)) {
+    if (!empty($result)) {
         return $result;
     }
 }
@@ -212,6 +216,7 @@ function isCorrectEmail(string $str) {
  */
 function isCorrectPassword($pass, $min, $max)
 {
+    $result ='';
     $pass = trim($pass);
     $errorLength = isCorrectLength($pass, $min, $max);
     if (isset($errorLength)) {
@@ -221,7 +226,7 @@ function isCorrectPassword($pass, $min, $max)
 
     }
 
-    if (isset($result)) {
+    if (!empty($result)) {
         return $result;
     }
 }
@@ -350,10 +355,5 @@ function checkBargainStatus($expiry_time, $winner_id, $user_id, $current_bid, $m
     }
     return $result;
 }
-
-
-
-
-
 
 

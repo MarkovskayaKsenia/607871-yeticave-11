@@ -2,6 +2,8 @@ CREATE DATABASE IF NOT EXISTS yeticave
     DEFAULT CHARACTER SET utf8
     DEFAULT COLLATE utf8_general_ci;
 
+SET GLOBAL time_zone = 'Europe/Moscow';
+
 USE yeticave;
 
 CREATE TABLE IF NOT EXISTS outfit_categories (

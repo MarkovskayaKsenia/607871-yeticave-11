@@ -69,7 +69,7 @@ if ($count_ads == 0) {
     //Заполнение шалона контента страницы в случае отсутствия найденных лотов
     $page_content = include_template('empty-search.php', ['outfit_nav' => $outfit_nav]);
 } else {
-    //Зполннеие шаблона в случае найденных лотов
+    //Заполнение шаблона в случае найденных лотов
     $sale_ads = mysqli_fetch_all($result_ads, MYSQLI_ASSOC);
 
     //Расчет срока окончания торгов для всех объявлений
@@ -86,12 +86,16 @@ if ($count_ads == 0) {
         'url' => $url,
     ]);
 
+    $ads_block = include_template('ads-block.php', [
+        'sale_ads' => $sale_ads,
+        'expiry_time'=> $expiry_time,
+        'bids_declension' => $bids_declension,
+    ]);
+
     //Заполнение контента страницы
     $page_content = include_template('search-lot.php', [
         'outfit_nav' => $outfit_nav,
-        'sale_ads' => $sale_ads,
-        'expiry_time' => $expiry_time,
-        'bids_declension' => $bids_declension,
+        'ads_block' => $ads_block,
         'pagination' => $pagination,
     ]);
 }
