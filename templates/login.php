@@ -1,5 +1,5 @@
 <main>
-    <?= $outfit_nav; ?>
+    <?= $outfit_navigation; ?>
     <form class="form container<?= (count($errors) != 0) ? ' form--invalid' : ''; ?>" action="user-login.php" method="post">
         <h2>Вход</h2>
         <div class="form__item<?= isset($errors['email']) ? ' form__item--invalid' : ''; ?>">

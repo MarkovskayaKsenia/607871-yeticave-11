@@ -1,6 +1,7 @@
 <?php
 require_once ('helpers.php');
-require_once ('functions.php');
+require_once('functions/functions.php');
+require_once('functions/validation.php');
 require_once('config.php'); //Настройки подключения к базе данных
 
 //Очистка данных, переданных в $_GET
@@ -35,7 +36,7 @@ $outfit_categories = mysqli_fetch_all($result_categories, MYSQLI_ASSOC);
 $lots_count = mysqli_num_rows($result_lot);
 
 //Заполняем шаблон навигации сайта по категориям
-$outfit_nav = include_template('outfit-nav.php', ['outfit_categories' => $outfit_categories]);
+$outfit_navigation = include_template('outfit-nav.php', ['outfit_categories' => $outfit_categories]);
 
 //Проверка на количество полученных лотов
 if ($lots_count == 0) {
@@ -45,7 +46,7 @@ if ($lots_count == 0) {
     $title = '404';
     //Контент страницы 404
     $page_content = include_template('404.php', [
-        'outfit_nav' => $outfit_nav,
+        'outfit_navigation' => $outfit_navigation,
     ]);
 } else {
     $lot_data = mysqli_fetch_assoc($result_lot);
@@ -64,17 +65,59 @@ if ($lots_count == 0) {
     //Массив для сбора ошибок валидации
     $errors = [];
 
-    require_once ('bid-validation.php');
+    if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
+        //Массив полей, обязательных к заполнению
+        $required_fields = ['cost'];
+        //Текст ошибок для пустых полей формы
+        $empty_errors = [
+            'cost' => 'Укажите вашу ставку',
+        ];
+
+        //Массив допустимых диапазонов для полей формы
+        $ranges = [
+            'cost_min' => $lot_data['price'] + $lot_data['bid_step'],
+            'cost_max' => $lot_data['price'] + $lot_data['bid_step'] + 15000,
+        ];
+
+        //Правила валидации для полей
+        $rules = [
+            'cost' => function (array $ranges) {
+                return isCorrectNumber($_POST['cost'], $ranges['cost_min'], $ranges['cost_max']);
+            },
+        ];
+
+    $errors = validationFormFields($_POST, $required_fields, $rules, $empty_errors, $ranges);
+
+        //Добавляем ставку на лот в базу данных
+        if (count($errors) === 0) {
+            $sql_bid = "INSERT INTO lots_bids (reg_date, bid_amount, user_id, lot_id) VALUES (?, ?, ?, ?)";
+            //Подготовка параметров для передачи в запрос
+            $reg_date = date('Y-m-d H:i:s');
+            $bid_amount = checkUserData($_POST['cost']);
+            $user_id = $_SESSION['user']['id'];
+
+            $stm_bid = db_get_prepare_stmt($mysql, $sql_bid, [$reg_date, $bid_amount, $user_id, $lot_data['id']]);
+            $result_bid = mysqli_stmt_execute($stm_bid);
+
+            if (!$result_bid) {
+                print('Что-то пошло не так и ваша ставка не добавилась.');
+                exit();
+            } else {
+                header('Location: lot.php?id=' . $lot_data['id']);
+            }
+        }
+
+    }
     //Заголовок старницы в случае существования лота
     $title = $lot_data['outfit_title'];
     //Расчет срока окончания торгов для лота
-    $expiry_time = countExpiryTime($lot_data['expiry_date']);
+    $expiry_times = countExpiryTime($lot_data['expiry_date']);
     //Контент страницы в случае существования лота
     $page_content = include_template('lot-card.php', [
-        'outfit_nav' => $outfit_nav,
+        'outfit_navigation' => $outfit_navigation,
         'lot_data' => $lot_data,
-        'expiry_time' => $expiry_time,
+        'expiry_times' => $expiry_times,
         'bids_count' => $bids_count,
         'bids_list' => $bids_list,
         'errors' => $errors,
@@ -83,7 +126,7 @@ if ($lots_count == 0) {
 
 $layout_content = include_template('layout.php', [
     'content' => $page_content,
-    'outfit_nav' => $outfit_nav,
+    'outfit_navigation' => $outfit_navigation,
     'title' => $title,
 ]);
 

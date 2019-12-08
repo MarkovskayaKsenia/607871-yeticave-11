@@ -1,4 +1,4 @@
-<?php foreach ($sale_ads as $key => $value): ?>
+<?php foreach ($sale_adverts as $key => $value): ?>
     <li class="lots__item lot">
         <div class="lot__image">
             <img src="../<?= $value['img_url']; ?>" width="350" height="260" alt="<?= $value['outfit_title']; ?>">
@@ -11,8 +11,8 @@
                     <span class="lot__amount"><?= ($value['bid_count'] != 0) ? declensionOfNouns($value['bid_count'], $bids_declension) : 'Стартовая цена'; ?></span>
                     <span class="lot__cost"><?= formatPrice($value['price'], true); ?></span>
                 </div>
-                <div class="lot__timer timer<?= ($expiry_time[$key][0] === '00') ? ' timer--finishing' : ''; ?>">
-                    <?= $expiry_time[$key][0] . ':' . $expiry_time[$key][1]; ?>
+                <div class="lot__timer timer<?= ($expiry_times[$key][0] === '00') ? ' timer--finishing' : ''; ?>">
+                    <?= $expiry_times[$key][0] . ':' . $expiry_times[$key][1]; ?>
                 </div>
             </div>
         </div>

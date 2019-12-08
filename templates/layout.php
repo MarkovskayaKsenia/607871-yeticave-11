@@ -1,5 +1,5 @@
 <?php
-require_once ('functions.php');
+require_once('functions/functions.php');
 ?>
 <!DOCTYPE html>
 <html lang="ru">
@@ -51,7 +51,7 @@ require_once ('functions.php');
 </div>
 
 <footer class="main-footer">
-    <?= $outfit_nav; ?>
+    <?= $outfit_navigation; ?>
     <div class="main-footer__bottom container">
         <div class="main-footer__copyright">
             <p>© 2019, YetiCave</p>

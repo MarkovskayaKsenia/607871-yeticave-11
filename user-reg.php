@@ -1,11 +1,12 @@
 <?php
-require_once ('helpers.php');
-require_once('functions.php');
+require_once('helpers.php');
+require_once('functions/functions.php');
+require_once('functions/validation.php');
 require_once('config.php'); //Настройки подключения к базе данных
 
 //Проверка авторизации юзера
-if(isset($_SESSION['user'])) {
-    header($_SERVER['SERVER_PROTOCOL']. '403 Forbidden');
+if (isset($_SESSION['user'])) {
+    header($_SERVER['SERVER_PROTOCOL'] . '403 Forbidden');
     header('Location: /');
     die();
 }
@@ -26,7 +27,7 @@ $outfit_categories = mysqli_fetch_all($result_categories, MYSQLI_ASSOC);
 $errors = [];
 
 //Валидация формы добавления нового лота
-if ($_SERVER['REQUEST_METHOD'] == 'POST') {
+if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
     //Массив полей, обязательных к заполнению
     $required_fields = ['email', 'password', 'name', 'message',];
@@ -65,33 +66,18 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         },
     ];
 
-    //Проверка на заполнение обязательных полей
-    foreach($required_fields as $value) {
-        if(!isset($_POST[$value]) || empty($_POST[$value])) {
-            $errors[$value] = isset($empty_errors[$value]) ?  $empty_errors[$value] : 'Поле не должно быть пустым';
-        }
-    }
-
-    //Применение правил валидации к заполненным полям формы
-    foreach ($_POST as $key => $value) {
-        if (!isset($errors[$key])) {
-            if (isset($value) && !empty($value) && isset($rules[$key])) {
-                $result = $rules[$key]($ranges);
-            }
-            (isset($result) && !empty($result)) ? $errors[$key] = $result : '';
-        }
-    };
+    $errors = validationFormFields($_POST, $required_fields, $rules, $empty_errors, $ranges);
 
 //Загрузка пользователя в базу данных
-    if (count($errors) == 0) {
+    if (count($errors) === 0) {
         //Проверка на существование пользователя с таким же email
         $email = mysqli_real_escape_string($mysql, $_POST['email']);
-        $sql_email_query = "SELECT id FROM users WHERE email = '$email'" ;
+        $sql_email_query = "SELECT id FROM users WHERE email = '$email'";
         $result_email = mysqli_query($mysql, $sql_email_query);
 
         if (mysqli_num_rows($result_email) > 0) {
             $errors['email'] = 'Пользователь с таким email уже существует';
-        }  else {
+        } else {
 
             //Добавление юзера в базу данных
             $sql_user = "INSERT INTO users (reg_date, email, login, password, contacts) "
@@ -125,16 +111,16 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 $title = 'Регистрация';
 
 //Заполнение шаблонов данными и вставка на старницу
-$outfit_nav = include_template('outfit-nav.php', ['outfit_categories' => $outfit_categories]);
+$outfit_navigation = include_template('outfit-nav.php', ['outfit_categories' => $outfit_categories]);
 
 $page_content = include_template('sign-up.php', [
-    'outfit_nav' => $outfit_nav,
+    'outfit_navigation' => $outfit_navigation,
     'errors' => $errors,
 ]);
 
 $layout_content = include_template('layout.php', [
     'content' => $page_content,
-    'outfit_nav' => $outfit_nav,
+    'outfit_navigation' => $outfit_navigation,
     'title' => $title,
 ]);
 

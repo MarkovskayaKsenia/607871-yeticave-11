@@ -1,5 +1,5 @@
     <main>
-        <?= $outfit_nav; ?>
+        <?= $outfit_navigation; ?>
         <section class="lot-item container">
             <h2><?= $lot_data['outfit_title']; ?></h2>
             <div class="lot-item__content">
@@ -12,8 +12,8 @@
                 </div>
                 <div class="lot-item__right">
                     <div class="lot-item__state">
-                        <div class="lot-item__timer timer<?= ($expiry_time[0] === '00') ? ' timer--finishing' : ''; ?>">
-                            <?= $expiry_time[0] . ':' . $expiry_time[1]; ?>
+                        <div class="lot-item__timer timer<?= ($expiry_times[0] === '00') ? ' timer--finishing' : ''; ?>">
+                            <?= $expiry_times[0] . ':' . $expiry_times[1]; ?>
                         </div>
                         <div class="lot-item__cost-state">
                             <div class="lot-item__rate">

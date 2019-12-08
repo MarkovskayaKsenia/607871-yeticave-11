@@ -1,11 +1,12 @@
 <?php
-require_once ('helpers.php');
-require_once('functions.php');
+require_once('helpers.php');
+require_once('functions/functions.php');
+require_once('functions/validation.php');
 require_once('config.php'); //Настройки подключения к базе данных
 
 //Проверка авторизации юзера
-if(isset($_SESSION['user'])) {
-    header($_SERVER['SERVER_PROTOCOL']. '403 Forbidden');
+if (isset($_SESSION['user'])) {
+    header($_SERVER['SERVER_PROTOCOL'] . '403 Forbidden');
     header('Location: /');
     die();
 }
@@ -26,7 +27,7 @@ $outfit_categories = mysqli_fetch_all($result_categories, MYSQLI_ASSOC);
 $errors = [];
 
 //Валидация формы добавления нового лота
-if ($_SERVER['REQUEST_METHOD'] == 'POST') {
+if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
     //Массив полей, обязательных к заполнению
     $required_fields = ['email', 'password'];
@@ -55,32 +56,16 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         },
     ];
 
-    //Проверка на заполнение обязательных полей
-    foreach($required_fields as $value) {
-        if(!isset($_POST[$value]) || empty($_POST[$value])) {
-            $errors[$value] = isset($empty_errors[$value]) ?  $empty_errors[$value] : 'Поле не должно быть пустым';
-        }
-    }
+    $errors = validationFormFields($_POST, $required_fields, $rules, $empty_errors, $ranges);
 
-    //Применение правил валидации к заполненным полям формы
-    foreach ($_POST as $key => $value) {
-        if (!isset($errors[$key])) {
-            if (isset($value) && !empty($value) && isset($rules[$key])) {
-                $result = $rules[$key]($ranges);
-            }
-
-            (isset($result) && !empty($result)) ? $errors[$key] = $result : '';
-        }
-    };
-
-    if(count($errors) == 0) {
+    if (count($errors) === 0) {
         //Проверка на существование пользователя с таким  email
         $email = mysqli_real_escape_string($mysql, $_POST['email']);
-        $sql_email_query = "SELECT * FROM users WHERE email = '$email'" ;
+        $sql_email_query = "SELECT * FROM users WHERE email = '$email'";
         $result_user = mysqli_query($mysql, $sql_email_query);
 
-       if (mysqli_num_rows($result_user) === 1) {
-           $user = mysqli_fetch_assoc($result_user);
+        if (mysqli_num_rows($result_user) === 1) {
+            $user = mysqli_fetch_assoc($result_user);
 
             if (password_verify($_POST['password'], $user['password'])) {
                 $_SESSION['user'] = $user;
@@ -101,16 +86,16 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 $title = 'Вход';
 
 //Заполнение шаблонов данными и вставка на старницу
-$outfit_nav = include_template('outfit-nav.php', ['outfit_categories' => $outfit_categories]);
+$outfit_navigation = include_template('outfit-nav.php', ['outfit_categories' => $outfit_categories]);
 
 $page_content = include_template('login.php', [
-    'outfit_nav' => $outfit_nav,
+    'outfit_navigation' => $outfit_navigation,
     'errors' => $errors,
 ]);
 
 $layout_content = include_template('layout.php', [
     'content' => $page_content,
-    'outfit_nav' => $outfit_nav,
+    'outfit_navigation' => $outfit_navigation,
     'title' => $title,
 ]);
 

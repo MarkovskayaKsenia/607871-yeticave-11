@@ -1,9 +1,9 @@
 <main>
-    <?= $outfit_nav; ?>
+    <?= $outfit_navigation; ?>
     <section class="rates container">
         <h2>Мои ставки</h2>
         <table class="rates__list">
-            <?php foreach($sale_ads as $key => $value): ?>
+            <?php foreach($sale_adverts as $key => $value): ?>
             <tr class="rates__item<?= $bargain_status[$key][0]; ?>">
                 <td class="rates__info">
                     <div class="rates__img">

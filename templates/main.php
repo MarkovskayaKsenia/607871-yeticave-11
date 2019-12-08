@@ -1,5 +1,5 @@
 <?php
-require_once ('functions.php');
+require_once('functions/functions.php');
 ?>
 <main class="container">
 <section class="promo">
@@ -18,7 +18,7 @@ require_once ('functions.php');
         <h2>Открытые лоты</h2>
     </div>
     <ul class="lots__list">
-       <?= $ads_block; ?>
+       <?= $adverts_block; ?>
     </ul>
 </section>
 </main>
