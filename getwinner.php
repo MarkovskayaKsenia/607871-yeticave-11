@@ -1,8 +1,8 @@
 <?php
 require_once('vendor/autoload.php');
 require_once('helpers.php');
-require_once('functions/functions.php');
-require_once('config.php');
+require_once('functions/general.php');
+require_once('functions/config.php');
 
 
 $transport = new Swift_SmtpTransport ('phpdemo.ru', 25);

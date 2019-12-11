@@ -1,8 +1,8 @@
 <?php
 require_once('helpers.php');
-require_once('functions/functions.php');
+require_once('functions/general.php');
 require_once('functions/validation.php');
-require_once('config.php'); //Настройки подключения к базе данных
+require_once('functions/config.php'); //Настройки подключения к базе данных
 
 //Проверка авторизации юзера
 if (!isset($_SESSION['user'])) {
@@ -93,7 +93,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     }
 }
 
-//Отрисовка страницы
 //Заголовок страницы
 $title = 'Добавление лота';
 

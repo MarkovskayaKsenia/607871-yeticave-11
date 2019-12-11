@@ -1,4 +1,4 @@
-<?php foreach ($sale_adverts as $key => $value): ?>
+<?php foreach ($sale_ads as $key => $value): ?>
     <li class="lots__item lot">
         <div class="lot__image">
             <img src="../<?= $value['img_url']; ?>" width="350" height="260" alt="<?= $value['outfit_title']; ?>">

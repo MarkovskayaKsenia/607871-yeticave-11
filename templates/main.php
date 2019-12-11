@@ -1,6 +1,3 @@
-<?php
-require_once('functions/functions.php');
-?>
 <main class="container">
 <section class="promo">
     <h2 class="promo__title">Нужен стафф для катки?</h2>
@@ -18,7 +15,7 @@ require_once('functions/functions.php');
         <h2>Открытые лоты</h2>
     </div>
     <ul class="lots__list">
-       <?= $adverts_block; ?>
+       <?= $ads_block; ?>
     </ul>
 </section>
 </main>

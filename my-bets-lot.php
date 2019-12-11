@@ -1,7 +1,7 @@
 <?php
 require_once('helpers.php');
-require_once('functions/functions.php');
-require_once('config.php'); //Настройки подключения к базе данных
+require_once('functions/general.php');
+require_once('functions/config.php'); //Настройки подключения к базе данных
 
 //Проверка авторизации юзера
 if (!isset($_SESSION['user'])) {
@@ -17,7 +17,7 @@ $sql_categories = "SELECT id, name, description FROM outfit_categories";
 $result_categories = mysqli_query($mysql, $sql_categories);
 
 //Запрос на получение массива объявлений о продаже
-$sql_advert = "SELECT ul.id AS id, (SELECT users.contacts FROM users WHERE users.id = ul.user_id) AS contacts, "
+$sql_ads = "SELECT ul.id AS id, (SELECT users.contacts FROM users WHERE users.id = ul.user_id) AS contacts, "
     . "outfit_title, img_url, expiry_date, oc.description AS outfit_category, ul.winner_id AS winner_id, "
     . "lb.reg_date AS bid_date, lb.bid_amount AS bid, "
     . "(SELECT MAX(bid_amount) FROM lots_bids WHERE lb.lot_id = lots_bids.lot_id group by lots_bids.lot_id ) AS max_bid "
@@ -27,48 +27,48 @@ $sql_advert = "SELECT ul.id AS id, (SELECT users.contacts FROM users WHERE users
     . "LEFT JOIN outfit_categories AS oc ON ul.outfit_category_id = oc.id "
     . "WHERE u.id = ? ORDER BY bid_date DESC ";
 
-$stm_adverts = db_get_prepare_stmt($mysql, $sql_advert, [$user_id]);
-$execute_adverts = mysqli_stmt_execute($stm_adverts);
+$stm_ads = db_get_prepare_stmt($mysql, $sql_ads, [$user_id]);
+$execute_ads = mysqli_stmt_execute($stm_ads);
 
-if (!$execute_adverts || !$result_categories) {
+if (!$execute_ads || !$result_categories) {
     $error = mysqli_error($mysql);
     print ("Ошибка MySQL: " . $error);
     die();
 }
 
-$result_adverts = mysqli_stmt_get_result($stm_adverts);
-$count_adverts = mysqli_num_rows($result_adverts);
+$result_ads = mysqli_stmt_get_result($stm_ads);
+$count_ads = mysqli_num_rows($result_ads);
 $outfit_categories = mysqli_fetch_all($result_categories, MYSQLI_ASSOC);
 
 //Заполнение шаблона навигации по категориям
 $outfit_navigation = include_template('outfit-nav.php', ['outfit_categories' => $outfit_categories]);
 
-if ($count_adverts == 0) {
+if ($count_ads == 0) {
     //Заполнение шалона контента страницы в случае отсутствия найденных лотов
     $page_content = include_template('empty-search.php', ['outfit_navigation' => $outfit_navigation]);
 } else {
     //Зполннеие шаблона в случае найденных лотов
-    $sale_adverts = mysqli_fetch_all($result_adverts, MYSQLI_ASSOC);
+    $sale_ads = mysqli_fetch_all($result_ads, MYSQLI_ASSOC);
 
     //Расчет срока окончания торгов для всех объявлений
-    $expiry_times = array_map('countExpiryTime', (array_column($sale_adverts, 'expiry_date')));
+    $expiry_times = array_map('countExpiryTime', (array_column($sale_ads, 'expiry_date')));
     $bargain_status = [];
 
    //Вычисление статуса торгов
     foreach($expiry_times as $key => $value){
         $bargain_status[] = checkBargainStatus(
             $value,
-            $sale_adverts[$key]['winner_id'],
+            $sale_ads[$key]['winner_id'],
             $user_id,
-            $sale_adverts[$key]['bid'],
-            $sale_adverts[$key]['max_bid']
+            $sale_ads[$key]['bid'],
+            $sale_ads[$key]['max_bid']
         );
     }
 
     //Заполнение контента страницы
     $page_content = include_template('my-bets.php', [
         'outfit_navigation' => $outfit_navigation,
-        'sale_adverts' => $sale_adverts,
+        'sale_ads' => $sale_ads,
         'expiry_time' => $expiry_times,
         'bargain_status' => $bargain_status,
     ]);

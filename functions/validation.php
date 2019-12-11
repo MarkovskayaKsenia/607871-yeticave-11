@@ -26,17 +26,12 @@ function isCorrectLength($value, int $min, int $max)
 function isCorrectNumber($number, int $min, int $max)
 {
     $number = filter_var($number, FILTER_VALIDATE_INT);
-    $result = '';
-    if ($number) {
-        if ($number < $min || $number > $max) {
-            $result = "Введите значение от $min до $max";
-        }
-    } else {
-        $result = "Введите корректное целое число";
+    if (!isset($number) || empty($number)) {
+        return "Введите корректное целое число";
     }
 
-    if ($result) {
-        return $result;
+    if ($number < $min || $number > $max) {
+        return "Введите значение от $min до $max";
     }
 }
 

@@ -1,6 +1,3 @@
-<?php
-require_once('functions/functions.php');
-?>
 <!DOCTYPE html>
 <html lang="ru">
 <head>
@@ -20,7 +17,7 @@ require_once('functions/functions.php');
             <img src="../img/logo.svg" width="160" height="39" alt="Логотип компании YetiCave">
         </a>
         <form class="main-header__search" method="get" action="search.php" autocomplete="off">
-            <input type="search" name="search" placeholder="Поиск лота" value="<?= checkUserData(getFormData($_GET, 'search')); ?>">
+            <input type="search" name="search" placeholder="Поиск лота" value="<?= getFormData($_GET, 'search'); ?>">
             <input class="main-header__search-btn" type="submit" name="find" value="Найти">
         </form>
         <?php if(isset($_SESSION['user'])): ?>

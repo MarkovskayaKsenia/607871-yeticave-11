@@ -1,8 +1,8 @@
 <?php
 require_once ('helpers.php');
-require_once('functions/functions.php');
+require_once('functions/general.php');
 require_once('functions/validation.php');
-require_once('config.php'); //Настройки подключения к базе данных
+require_once('functions/config.php'); //Настройки подключения к базе данных
 
 //Очистка данных, переданных в $_GET
 $lot_id = $_GET['id'] ?? 0;

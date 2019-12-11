@@ -1,5 +1,6 @@
 <?php
-require_once('functions/functions.php');
+require_once('helpers.php');
+require_once('functions/general.php');
 
 //Путь сохранения изображений.
 $new_img_path = __DIR__ . '/uploads/';

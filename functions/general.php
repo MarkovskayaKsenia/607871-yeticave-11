@@ -37,17 +37,16 @@ function countExpiryTime(string $date): array
     $expiry_date = date_create($date);
     $now = date_create(date('Y-m-d H:i:s'));
 
-    if ($expiry_date > $now) {
-        $time_difference = (array)date_diff($now, $expiry_date);
-        $hours_in_day = 24;
-        $hours_left = $time_difference['d'] * $hours_in_day + $time_difference['h'];
-        $hours_left = ($hours_left >= 10) ? ('' . $hours_left) : ('0' . $hours_left);
-        $minutes_left = ($time_difference['i'] >= 10) ? ('' . $time_difference['i']) : ('0' . $time_difference['i']);
-        $time_left = [$hours_left, $minutes_left];
-    } else {
-        $time_left = ['00', '00'];
+    if ($expiry_date <= $now) {
+        return ['00', '00'];
     }
 
+    $time_difference = (array)date_diff($now, $expiry_date);
+    $hours_in_day = 24;
+    $hours_left = $time_difference['d'] * $hours_in_day + $time_difference['h'];
+    $hours_left = ($hours_left >= 10) ? ('' . $hours_left) : ('0' . $hours_left);
+    $minutes_left = ($time_difference['i'] >= 10) ? ('' . $time_difference['i']) : ('0' . $time_difference['i']);
+    $time_left = [$hours_left, $minutes_left];
     return $time_left;
 }
 
@@ -71,32 +70,25 @@ function getFormData(array $array, string $name): string
  * @return string - возвращается число и соответствующее склонение единицы измерения.
  */
 function declensionOfNouns(int $number, array $nouns): string {
+    $noun = $nouns[2] ?? ''; // Значение по умолчанию.
 
-    if ($number >= 11 and $number <= 14) {
-        $i = 2;
-    } else {
-        switch ($number % 10){
-            case 1: $i = 0;
-                break;
-            case 2:
-            case 3:
-            case 4: $i = 1;
-                break;
-            default: $i = 2;
-                break;
-        }
+    $divisionRemainder = $number % 10;
+    if ($divisionRemainder === 1) {
+        $noun = $nouns[0] ?? '';
+    }
+    if (in_array($divisionRemainder, [2, 3, 4])) {
+        $noun = $nouns[1] ?? '';
     }
 
-    return $number . ' ' . $nouns[$i];
+    if ($number >= 11 && $number <= 14) {
+        $noun = $nouns[2] ?? '';
+    }
+
+    return "$number $noun";
 }
 
 /**
  * Подбор формата времени для отображения "срока давности" сделанной ставки.
- *
- * Если ставка сделана меньше часа назад - срок давности показывает сколько полных минут прошло с момента ставки..
- * Если ставка сделана больше часа назад, но меньше суток - срок давности показывает сколько часов полных часов прошло с момента ставки.
- * Если ставка сделана больше суток назад - срок давности показывает дату и время, когда была сделана ставка.
- *
  * @param string $date - дата и время, когда была сделана ставка. в формате 'Y-m-d H:i:s'.
  *
  * @return string - возвращает срок давности сделанной ставки.
@@ -113,30 +105,27 @@ function formatTimeDistance(string $date): string {
     ];
 
     $time_distance = [
-        'days' => floor($time_difference / 86400),
         'hours' => floor($time_difference / 3600),
         'minutes' => floor($time_difference / 60)
     ];
 
-    if($time_distance['days'] > 0) {
-        $date_format= date('y.m.d',$reg_date) . ' в ' . date('H:i', $reg_date);
-    } else{
-        $key = ($time_distance['hours'] > 0) ? 'hours' : 'minutes';
-        $number_display = $time_distance[$key];
-        $date_format = $time_declensions[$key];
+    if($time_distance['hours'] > 24) {
+        return date('y.m.d в H:i', $reg_date);
     }
 
-    $result = (isset($number_display)) ? declensionOfNouns($number_display, $date_format) . ' назад': $date_format;
-    return $result;
+    $key = ($time_distance['hours'] > 0) ? 'hours' : 'minutes';
+    $measure_display = $time_distance[$key];
+    $date_format = $time_declensions[$key];
+
+    return declensionOfNouns($measure_display, $date_format) . ' назад';
 }
 
 /**Проверка на право сделать ставку - доступ к кнопке  "Сделать ставку" на форме.
  * Ставки принимаются только от зарегестрированных юзеров - у юзера должна быть открытая сессия.
- * @param array $lot_data - массив, содержащий срок окончания торгов по и id продавца.
- * Если срок прошел, торги по лоту запрещены.
- * @param $bids_list - список ставок по лоту. Юзер не может делать 2 и более ставки подряд на один лот.
+ * @param array $lot_data - массив, содержащий срок окончания торгов и id продавца.
+ * @param $bids_list - список ставок по лоту.
  *
- * return boolean - Если true - есть право на ставку, false - права на ставку нет.
+ * @return boolean - Если true - есть право на ставку, false - права на ставку нет.
  */
 function bidResolution($lot_data, $bids_list) {
     //Идентификатор последней ставки
@@ -156,19 +145,18 @@ function bidResolution($lot_data, $bids_list) {
     ];
 
     //Право на ставку есть, если не нарушено ни одно из правил
-    $result  = true;
     foreach($rules as $value) {
         if ($value !== true) {
-            $result = false;
+            return false;
         }
     }
-    return $result;
+    return true;
 }
 
 /**
  * Определение статуса ставки юзера на странице "Мои ставки".
- * @param array $expiry_times - массив из двух элементов, первый элемент - количество часов до окончания торгов,
- * во втором - количество минут.
+ * @param array $expiry_time - массив из двух элементов, первый элемент - количество часов до окончания торгов,
+ * второй элемент - количество минут.
  * @param int $winner_id - в поле "победитель" в таблице лотов указан id юзера.
  * @param int $user_id - текущий залогиненный юзер.
  * @param int $current_bid - сумма отдельной ставки.
@@ -177,26 +165,41 @@ function bidResolution($lot_data, $bids_list) {
  */
 function checkBargainStatus($expiry_time, $winner_id, $user_id, $current_bid, $max_bid)
 {
-    if ($expiry_time[0] === '00' && $expiry_time[1] === '00') {
-        ($winner_id == $user_id && $current_bid == $max_bid) ?
-            $result = [
-            ' rates__item--win',
-            ' timer--win',
-            'Ставка выиграла'
-        ] : $result = [' rates__item--end', ' timer--end', 'Торги окончены'];
-    } elseif ($expiry_time[0] === '') {
-        $result = ['', ' timer--finishing', $expiry_time[0] . ':' . $expiry_time[1]];
-    } else {
-        $result = ['', '', $expiry_time[0] . ':' . $expiry_time[1]];
+    $bid_status = [
+        'win' => [' rates__item--win', ' timer--win', 'Ставка выиграла'],
+        'end' => [' rates__item--end', ' timer--end', 'Торги окончены'],
+        'finishing' => ['', ' timer--finishing', "$expiry_time[0]:$expiry_time[1]"],
+        'normal' => ['', '', "$expiry_time[0]:$expiry_time[1]"],
+    ];
+
+    $rules = [
+        'win' => ($winner_id == $user_id && $current_bid == $max_bid),
+        'end' => ($expiry_time[0] === '00' && $expiry_time[1] === '00'),
+        'finishing' => ($expiry_time[0] === '00'),
+        'normal' => true,
+    ];
+
+    foreach ($rules as $key => $value) {
+        if ($value === true) {
+            return $bid_status[$key];
+        }
     }
-    return $result;
 }
+/**
+ * Определение параметров пагинации.
+ * @param int $current_page - текущая страница,
+ * @param array $parameters - параметры для формирования url страниц.
+ * @param int $page_items - количество элементов на странице.
+ * @param int $rows_count - общее количество элементов.
+ * @param string $script_name - путь к файлу, на который выводится пагинация.
+ * @return array - Возвращает список данных, необходимых для пагинации.
+ */
 
 function getPaginationOptions($current_page, $parameters, $page_items, $rows_count, $script_name)
 {
     $pagination['current_page'] = (intval(filter_var($current_page, FILTER_VALIDATE_INT))) ?? 1;
     $pagination['pages_count'] = ceil($rows_count / $page_items);
-    $pagination['offset_adverts'] = ($current_page - 1) * $page_items;
+    $pagination['offset_ads'] = ($current_page - 1) * $page_items;
     $pagination['pages'] = range(1, $pagination['pages_count']);
     $build_query = http_build_query($parameters);
     $pagination['url'] = '/' . $script_name . '?' . $build_query;
