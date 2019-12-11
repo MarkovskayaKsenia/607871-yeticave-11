@@ -163,7 +163,16 @@ function isCorrectPassword($password, $min, $max)
         return $result;
     }
 }
-
+/**
+ * Примененией правил валидации ко всем полям формы
+ * @param array $method - метод, передающий данные формы.
+ * @param array $required_fields - список обязательных для заполнения полей формы.
+ * @param array $rules - список правил валидации для каждого поля.
+ * @param array $empty_errors - список ошибок для незаполненных обязательных полей.
+ * @param array $ranges - список максимально и минимально допустимых значений для каждого поля.
+ *
+ * @return array $errors- Если есть ошибки валидации, то они собираются в массив, который функция возвращает.
+ */
 
 function validationFormFields($method, $required_fields, $rules, $empty_errors, $ranges)
 {

@@ -4,7 +4,7 @@
  * @param int $num - целое число, которое нужно разделить на классы.
  * @param bool $ruble_sign - признак добавления денежной единицы "рубль": если равен true - добавляется, если false - нет.
  *
- * @return string - отформатированное  на классы число со знаком "рубль" или без, в зависимости от значения $ruble_sign.
+ * @return string - отформатированное на классы число со знаком "рубль" или без, в зависимости от значения $ruble_sign.
  */
 function formatPrice(int $num, bool $ruble_sign): string
 {
@@ -19,7 +19,8 @@ function formatPrice(int $num, bool $ruble_sign): string
  * Проверка и очистка данных, введенных пользователем
  * @param string $value - текстовые данные, введенные пользователем.
  *
- * @return string - возвращает данные, введенные пользователем, очищенные от тегов, лишних пробелов по краям и с экранированными специальными символами.
+ * @return string - возвращает данные, введенные пользователем, очищенные от тегов, лишних пробелов по краям и с
+ * экранированными специальными символами.
  */
 function checkUserData(string $value): string
 {
@@ -72,11 +73,11 @@ function getFormData(array $array, string $name): string
 function declensionOfNouns(int $number, array $nouns): string {
     $noun = $nouns[2] ?? ''; // Значение по умолчанию.
 
-    $divisionRemainder = $number % 10;
-    if ($divisionRemainder === 1) {
+    $division_remainder = $number % 10;
+    if ($division_remainder === 1) {
         $noun = $nouns[0] ?? '';
     }
-    if (in_array($divisionRemainder, [2, 3, 4])) {
+    if (in_array($division_remainder, [2, 3, 4])) {
         $noun = $nouns[1] ?? '';
     }
 
@@ -120,7 +121,8 @@ function formatTimeDistance(string $date): string {
     return declensionOfNouns($measure_display, $date_format) . ' назад';
 }
 
-/**Проверка на право сделать ставку - доступ к кнопке  "Сделать ставку" на форме.
+/**
+ * Проверка на право сделать ставку - доступ к кнопке  "Сделать ставку" на форме.
  * Ставки принимаются только от зарегестрированных юзеров - у юзера должна быть открытая сессия.
  * @param array $lot_data - массив, содержащий срок окончания торгов и id продавца.
  * @param $bids_list - список ставок по лоту.
@@ -185,6 +187,7 @@ function checkBargainStatus($expiry_time, $winner_id, $user_id, $current_bid, $m
         }
     }
 }
+
 /**
  * Определение параметров пагинации.
  * @param int $current_page - текущая страница,
@@ -194,7 +197,6 @@ function checkBargainStatus($expiry_time, $winner_id, $user_id, $current_bid, $m
  * @param string $script_name - путь к файлу, на который выводится пагинация.
  * @return array - Возвращает список данных, необходимых для пагинации.
  */
-
 function getPaginationOptions($current_page, $parameters, $page_items, $rows_count, $script_name)
 {
     $pagination['current_page'] = (intval(filter_var($current_page, FILTER_VALIDATE_INT))) ?? 1;
@@ -206,5 +208,4 @@ function getPaginationOptions($current_page, $parameters, $page_items, $rows_cou
 
     return $pagination;
 }
-
 
